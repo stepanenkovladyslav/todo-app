@@ -1,7 +1,8 @@
-import { AutoIncrement, Column, PrimaryKey, Table } from "sequelize-typescript";
+import { ConfigurableModuleBuilder } from "@nestjs/common";
+import { AutoIncrement, Column, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
 
 @Table
-export class Tasks {
+export class Tasks extends Model {
     @Column
     @PrimaryKey
     @AutoIncrement
@@ -21,4 +22,14 @@ export class Tasks {
     
     @Column
     isCompleted: boolean 
+}
+
+@Table
+
+export class TagTasks extends Model {
+    @Column
+    @PrimaryKey
+    @AutoIncrement
+    id: number
+
 }

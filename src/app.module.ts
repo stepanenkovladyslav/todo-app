@@ -4,6 +4,8 @@ import { TasksModule } from './tasks/tasks.module';
 import { UsersModule } from './users/users.module';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { User } from './users/user.model';
+import { Tasks } from './tasks/tasks.model';
+import { Tags } from './tags/tags.model';
 
 @Module({
   imports: [ SequelizeModule.forRoot({
@@ -13,7 +15,7 @@ import { User } from './users/user.model';
     username: "root", 
     password: "12345",
     database: "taskManagement",
-    models: [User]
+    models: [User, Tags, Tasks]
   }) ,TagsModule, TasksModule, UsersModule],
   controllers: [],
   providers: [],

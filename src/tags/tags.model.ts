@@ -1,7 +1,7 @@
-import { AutoIncrement, Column, PrimaryKey, Table, Unique } from "sequelize-typescript";
+import { AutoIncrement, Column, Model, PrimaryKey, Table, Unique } from "sequelize-typescript";
 
 @Table
-export class Tags {
+export class Tags extends Model {
     @Column
     @PrimaryKey
     @AutoIncrement
