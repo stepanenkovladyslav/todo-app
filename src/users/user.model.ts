@@ -1,4 +1,4 @@
-import { Column, Table, Model, PrimaryKey, AutoIncrement, Unique } from "sequelize-typescript";
+import { Column, Table, Model, PrimaryKey, AutoIncrement, Unique, AllowNull } from "sequelize-typescript";
 
 @Table
     export class User extends Model {
@@ -8,12 +8,15 @@ import { Column, Table, Model, PrimaryKey, AutoIncrement, Unique } from "sequeli
         @Column
         id: number
 
+        @AllowNull(false)
         @Column
         username: string
 
+        @AllowNull(false)
         @Column
         email: string
 
+        @AllowNull(false)
         @Column
         password: string
 }

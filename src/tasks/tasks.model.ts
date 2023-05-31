@@ -1,4 +1,4 @@
-import { AutoIncrement,  BelongsToMany, Column, ForeignKey, HasMany, Model, PrimaryKey, Table, Unique } from "sequelize-typescript";
+import { AllowNull, AutoIncrement,  BelongsToMany, Column, ForeignKey, HasMany, Model, PrimaryKey, Table, Unique } from "sequelize-typescript";
 import { Tags } from "src/tags/tags.model";
 
 @Table
@@ -9,6 +9,7 @@ export class Tasks extends Model {
     @Column
     id: number
 
+    @AllowNull(false)
     @Column
     title: string
 
@@ -22,7 +23,7 @@ export class Tasks extends Model {
     date: Date
     
     @Column
-    isCompleted: boolean 
+    isCompleted: boolean
 
     @BelongsToMany(()=> Tags, ()=> TagTasks)
     Tags: Array<Tags>

@@ -1,4 +1,4 @@
-import { AutoIncrement, BelongsToMany, Column, HasMany, Model, PrimaryKey, Table, Unique } from "sequelize-typescript";
+import { AllowNull, AutoIncrement, BelongsToMany, Column, HasMany, Model, PrimaryKey, Table, Unique } from "sequelize-typescript";
 import { TagTasks, Tasks } from "src/tasks/tasks.model";
 
 @Table
@@ -9,6 +9,7 @@ export class Tags extends Model {
     @Column
     id : number
 
+    @AllowNull(false)
     @Column
     name: string
 
