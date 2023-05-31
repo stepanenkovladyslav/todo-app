@@ -1,8 +1,9 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { createTaskDTO } from "./dto/createTask.dto";
 import { Tasks } from "./tasks.model";
-import { Model } from "sequelize";
+import { Model, where } from "sequelize";
 import { InjectModel } from "@nestjs/sequelize";
+import { getOneTaskDTO } from "./dto/getOne.dto";
 
 @Injectable()
 
@@ -14,12 +15,14 @@ export class TasksService {
         return task
     }
 
-    getAll() {
-
+    async getAll() {
+        const tasks = await this.taskModel.findAll();
+        return tasks;
     }
 
-    getOne() {
-
+    async getOne(id: getOneTaskDTO) {
+        const task = await this.taskModel.findOne({where: {id}})
+        return task
     }
 
     getTagsBy() {
@@ -50,8 +53,12 @@ export class TasksService {
         
     }
 
-    deleteTask() {
-
+    async deleteTask(id: getOneTaskDTO) {
+        const task = await this.taskModel.findOne({where: {id}});
+        if (task) {
+            task.destroy()
+        }
+        return {message: "Task Deleted"} 
     }
 
 }
