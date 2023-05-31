@@ -4,6 +4,7 @@ import { Tasks } from "./tasks.model";
 import { Model, where } from "sequelize";
 import { InjectModel } from "@nestjs/sequelize";
 import { getOneTaskDTO } from "./dto/getOne.dto";
+import { changeTaskInfo } from "./dto/changeTaskInfo.dto";
 
 @Injectable()
 
@@ -29,12 +30,20 @@ export class TasksService {
 
     }
 
-    changeTitle() {
-
+    async changeTitle(body : changeTaskInfo) {
+        const {id, newTitle} = body;
+        const task = await this.taskModel.findOne({where: {id}});
+        task.title = newTitle;
+        await task.save()
+        return task;
     }
 
-    changeDescription() {
-
+    async changeDescription(body:changeTaskInfo) {
+        const {id, newDescription} = body;
+        const task = await this.taskModel.findOne({where: {id}});
+        task.description = newDescription;
+        await task.save()
+        return task;
     }
 
     changeDeadline() {
