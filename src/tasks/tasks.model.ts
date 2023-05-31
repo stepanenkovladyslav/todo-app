@@ -1,11 +1,12 @@
-import { ConfigurableModuleBuilder } from "@nestjs/common";
-import { AutoIncrement, Column, ForeignKey, Model, PrimaryKey, Table } from "sequelize-typescript";
+import { AutoIncrement,  BelongsToMany, Column, ForeignKey, HasMany, Model, PrimaryKey, Table, Unique } from "sequelize-typescript";
+import { Tags } from "src/tags/tags.model";
 
 @Table
 export class Tasks extends Model {
-    @Column
     @PrimaryKey
+    @Unique
     @AutoIncrement
+    @Column
     id: number
 
     @Column
@@ -22,14 +23,25 @@ export class Tasks extends Model {
     
     @Column
     isCompleted: boolean 
+
+    @BelongsToMany(()=> Tags, ()=> TagTasks)
+    Tags: Array<Tags>
+
 }
 
 @Table
 
 export class TagTasks extends Model {
-    @Column
     @PrimaryKey
     @AutoIncrement
-    id: number
+    @Column
+    id: number    
 
+    @ForeignKey(()=> Tags)
+    @Column
+    tagId: number
+
+    @ForeignKey(()=> Tasks)
+    @Column
+    taskId : number
 }
