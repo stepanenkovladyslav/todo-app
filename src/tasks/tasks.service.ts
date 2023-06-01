@@ -36,6 +36,8 @@ export class TasksService {
        if (task) {
         const tags = task.Tags
         return tags
+       } else {
+        return {message: "There is no such task"}
        }
     }
 
@@ -77,8 +79,16 @@ export class TasksService {
         
     }
 
-    addFile() {
+    async getFiles() {
 
+    }
+
+    async addFile(id : getOneTaskDTO, file: Express.Multer.File) {
+        const task = await this.taskModel.findOne({where: {id}});
+        if (task) {
+            task.file = file.filename;
+            return task;
+        }
     }
 
     deleteFile() {
