@@ -24,6 +24,11 @@ export class TasksController {
     return this.taskService.getOne(id)
    }
 
+   @Get("/get-tags/:id")
+   async getTagsBy(@Param("id") id: getOneTaskDTO) {
+    return this.taskService.getTagsBy(id)
+   }
+
    @Put("change-title")
    async changeTitle(@Body() body: changeTaskInfo) {
     return this.taskService.changeTitle(body)
@@ -32,6 +37,16 @@ export class TasksController {
    @Put("change-desc")
    async changeDescription(@Body() body: changeTaskInfo) {
     return this.taskService.changeDescription(body)
+   }
+
+   @Put("change-deadline")
+   async changeDeadline(@Body() body: changeTaskInfo) {
+    return this.taskService.changeDeadline(body)
+   }
+
+   @Put("complete")
+   async changeCompletionStatus(@Body() body: changeTaskInfo) {
+    return this.taskService.changeCompletionStatus(body)
    }
 
    @Delete(":id")

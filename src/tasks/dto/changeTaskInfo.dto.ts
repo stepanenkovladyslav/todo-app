@@ -3,4 +3,5 @@ export class changeTaskInfo {
     newTitle: string
     newDescription: string
     newDeadline: Date
+    isCompleted: boolean
 }
