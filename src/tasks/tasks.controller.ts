@@ -5,6 +5,7 @@ import { createTaskDTO } from "./dto/createTask.dto";
 import { getOneTaskDTO } from "./dto/getOne.dto";
 import { changeTaskInfo } from "./dto/changeTaskInfo.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
+import { addTagToTaskDTO } from "./dto/addTagToTaskDTO.dto";
 
 @Controller("tasks")
 
@@ -65,6 +66,11 @@ export class TasksController {
    @Put("complete")
    async changeCompletionStatus(@Body() body: changeTaskInfo) {
     return this.taskService.changeCompletionStatus(body)
+   }
+
+   @Put("add-tag")
+   async addTag(@Body() body: addTagToTaskDTO) {
+    return this.taskService.addTag(body);
    }
 
    @Delete(":id")

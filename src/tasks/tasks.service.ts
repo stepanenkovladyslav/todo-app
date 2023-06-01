@@ -1,6 +1,6 @@
 import { Inject, Injectable } from "@nestjs/common";
 import { createTaskDTO } from "./dto/createTask.dto";
-import { Tasks } from "./tasks.model";
+import { TagTasks, Tasks } from "./tasks.model";
 import { Model, where } from "sequelize";
 import { InjectModel } from "@nestjs/sequelize";
 import { getOneTaskDTO } from "./dto/getOne.dto";
@@ -9,6 +9,7 @@ import { Tags } from "src/tags/tags.model";
 import { join } from "path";
 import { createReadStream } from "fs";
 import { Response } from "express";
+import { addTagToTaskDTO } from "./dto/addTagToTaskDTO.dto";
 
 @Injectable()
 
@@ -42,6 +43,16 @@ export class TasksService {
        } else {
         return {message: "There is no such task"}
        }
+    }
+    
+    async addTag(body: addTagToTaskDTO) {
+        const {tagId, taskId} = body;
+        const task = await this.taskModel.findOne({where: {id: taskId}, include: [{model: Tags, through: {attributes: []}}]})
+        const tag = await Tags.findOne({where: {id: tagId}, raw: true})
+        if (task && tag) {
+            const tagsTasks = TagTasks.create({tagId, taskId});
+            return tagsTasks
+        }
     }
 
     async changeTitle(body : changeTaskInfo) {

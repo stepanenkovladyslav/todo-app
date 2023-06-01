@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
-import { createTagDTO } from "./createTagDTO.dto";
+import { createTagDTO } from "./dto/createTagDTO.dto";
 import { Tags } from "./tags.model";
 import { Model } from "sequelize";
 import { InjectModel } from "@nestjs/sequelize";
 import { Tasks } from "src/tasks/tasks.model";
-import { changeTagNameDTO } from "./changeTagNameDTO.dto";
+import { changeTagNameDTO } from "./dto/changeTagNameDTO.dto";
 
 @Injectable()
 
