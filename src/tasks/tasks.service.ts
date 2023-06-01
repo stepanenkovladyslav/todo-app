@@ -6,6 +6,9 @@ import { InjectModel } from "@nestjs/sequelize";
 import { getOneTaskDTO } from "./dto/getOne.dto";
 import { changeTaskInfo } from "./dto/changeTaskInfo.dto";
 import { Tags } from "src/tags/tags.model";
+import { join } from "path";
+import { createReadStream } from "fs";
+import { Response } from "express";
 
 @Injectable()
 
@@ -79,20 +82,30 @@ export class TasksService {
         
     }
 
-    async getFiles() {
-
+    async getFiles(id: getOneTaskDTO, res: Response) {
+        const task = await this.taskModel.findOne({where: {id}});
+        if (task) {
+            const filePath = join(process.cwd(), 'uploads', task.file);
+            res.sendFile(filePath)
+        }
     }
 
     async addFile(id : getOneTaskDTO, file: Express.Multer.File) {
         const task = await this.taskModel.findOne({where: {id}});
         if (task) {
             task.file = file.filename;
+            await task.save()
             return task;
         }
     }
 
-    deleteFile() {
-
+    async deleteFile(id : getOneTaskDTO) {
+        const task = await this.taskModel.findOne({where: {id}});
+        if (task) {
+            task.file = null;
+            await task.save()
+            return task;
+        }
     }
 
     async changeCompletionStatus(body: changeTaskInfo) {

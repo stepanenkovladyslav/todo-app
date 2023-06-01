@@ -1,4 +1,5 @@
-import { Body, Controller, Delete, FileTypeValidator, Get, Param, ParseFilePipe, Post, Put, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, FileTypeValidator, Get, Param, ParseFilePipe, Post, Put, Res, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { Response } from "express";
 import { TasksService } from "./tasks.service";
 import { createTaskDTO } from "./dto/createTask.dto";
 import { getOneTaskDTO } from "./dto/getOne.dto";
@@ -23,6 +24,11 @@ export class TasksController {
    @Get("/get-tags/:id")
    async getTagsBy(@Param("id") id: getOneTaskDTO) {
     return this.taskService.getTagsBy(id)
+   }
+
+   @Get("get-files/:id")
+   async getFiles(@Param("id") id: getOneTaskDTO, @Res() res: Response) {
+    return this.taskService.getFiles(id, res)
    }
 
    @Post("create")
@@ -64,6 +70,11 @@ export class TasksController {
    @Delete(":id")
    async deleteTask(@Param("id") id: getOneTaskDTO) {
     return this.taskService.deleteTask(id)
+   }
+
+   @Delete("delete-files/:id") 
+   async deleteFiles(@Param("id") id: getOneTaskDTO) {
+    return this.taskService.deleteFile(id)
    }
 
 }
