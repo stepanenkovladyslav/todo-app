@@ -8,6 +8,7 @@ import { TagTasks, Tasks } from './tasks/tasks.model';
 import { Tags } from './tags/tags.model';
 import { ConfigModule } from '@nestjs/config';
 
+
 @Module({
   imports: [ ConfigModule.forRoot({isGlobal: true}) , SequelizeModule.forRoot({
     dialect: "mysql",

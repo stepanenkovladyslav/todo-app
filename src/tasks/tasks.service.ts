@@ -8,8 +8,8 @@ import { changeTaskInfo } from "./dto/changeTaskInfo.dto";
 import { Tags } from "src/tags/tags.model";
 import { join } from "path";
 import { createReadStream } from "fs";
-import { Response } from "express";
 import { addTagToTaskDTO } from "./dto/addTagToTaskDTO.dto";
+import { Response } from "express";
 
 @Injectable()
 

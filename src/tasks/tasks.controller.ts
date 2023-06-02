@@ -1,11 +1,11 @@
 import { Body, Controller, Delete, FileTypeValidator, Get, Param, ParseFilePipe, Post, Put, Res, UploadedFile, UseInterceptors } from "@nestjs/common";
-import { Response } from "express";
 import { TasksService } from "./tasks.service";
 import { createTaskDTO } from "./dto/createTask.dto";
 import { getOneTaskDTO } from "./dto/getOne.dto";
 import { changeTaskInfo } from "./dto/changeTaskInfo.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { addTagToTaskDTO } from "./dto/addTagToTaskDTO.dto";
+import {Response} from "express";
 
 @Controller("tasks")
 
