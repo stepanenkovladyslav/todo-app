@@ -17,4 +17,5 @@ export class UserController {
     async getInfo(@Param("id") id : number) {
         return this.userService.getInfo(id)
     }
+
 }
