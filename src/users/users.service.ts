@@ -10,11 +10,11 @@ import { Request } from "express";
 export class UsersService {
     constructor(@InjectModel(User) private readonly userModel : typeof User) {}
 
-    async createAccount(body: createAccountDTO, session: Record<string, any>) {
+    async createAccount(body: createAccountDTO) {
        let {username, email, password} = body;
         password = await bcrypt.hash(password, 10); //sequelize takes object with password field
        const user = await this.userModel.create({username, email, password})
-       session.visits = session.visits ? session.visits+1 : 1
+      
         user.save()
         return user;
     }

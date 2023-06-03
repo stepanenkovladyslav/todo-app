@@ -94,20 +94,22 @@ export class TasksService {
     }
 
     async getFiles(id: getOneTaskDTO, res: Response) {
-        const task = await this.taskModel.findOne({where: {id}});
+        const task: Tasks = await this.taskModel.findOne({where: {id}});
         if (task) {
             const filePath = join(process.cwd(), 'uploads', task.file);
             res.sendFile(filePath)
         }
     }
 
-    async addFile(id : getOneTaskDTO, file: Express.Multer.File) {
-        const task = await this.taskModel.findOne({where: {id}});
+    async addFile(id : getOneTaskDTO, file: Express.Multer.File): Promise<Tasks> {
+        const task:Tasks = await this.taskModel.findOne({where: {id}});
         if (task) {
-            task.file = file.filename;
+            console.log(file)
+            task.file = `${file.filename}.${file.originalname.split(".")[1]}`;
             await task.save()
             return task;
         }
+        return {} as Tasks
     }
 
     async deleteFile(id : getOneTaskDTO) {
