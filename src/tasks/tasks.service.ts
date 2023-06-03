@@ -46,8 +46,8 @@ export class TasksService {
         // const task = await this.taskModel.findOne({where: {id: taskId}, include: [{model: Tags, through: {attributes: []}}]})
         // const tag = await Tags.findOne({where: {id: tagId}, raw: true})
         // if (task && tag) {
-        //     const tagsTasks = TagTasks.create({tagId, taskId});
-        //     return tagsTasks
+        //     //const tagsTasks = TagTasks.create({tagId, taskId});
+        //     //return tagsTasks 
         // }
     }
 

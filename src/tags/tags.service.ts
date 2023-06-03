@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { createTagDTO } from "./dto/createTagDTO.dto";
 import { changeTagNameDTO } from "./dto/changeTagNameDTO.dto";
 import { Tags } from "./schemas/tags.schema";
@@ -52,6 +52,6 @@ export class TagsService {
             tag.save()
             return tag
         } 
-        //return {message: "There is no such tag"}
+        throw new NotFoundException();
     }
 }
