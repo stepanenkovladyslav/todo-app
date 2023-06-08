@@ -45,7 +45,7 @@ export class TasksController {
             new FileTypeValidator({fileType: /^(text\/plain|application\/pdf)$/ })
         ]})) 
         file: Express.Multer.File) {
-    return this.taskService.addFile(id, file);
+    // return this.taskService.addFile(id, file);
    }
 
    @Put("change-title")

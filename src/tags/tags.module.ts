@@ -8,7 +8,8 @@ import { Tags, TagsSchema } from "./schemas/tags.schema";
 @Module({
     imports: [MongooseModule.forFeature([{name: Tags.name, schema: TagsSchema}])],
     controllers: [TagsController],
-    providers: [TagsService]
+    providers: [TagsService],
+    exports:[MongooseModule.forFeature([{name: Tags.name, schema: TagsSchema}])]
 })
 
 export class TagsModule {};

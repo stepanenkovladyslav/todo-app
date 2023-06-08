@@ -8,7 +8,7 @@ export type TagsDocument = Tags & Document;
 
 
 export class Tags {
-    @Prop()
+    @Prop({required: true})
     name: string
 
     @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Tasks'})

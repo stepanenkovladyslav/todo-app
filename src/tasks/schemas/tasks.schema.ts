@@ -1,11 +1,11 @@
-import { Prop, Schema } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { Mongoose } from "mongoose";
 import { Tags } from "src/tags/schemas/tags.schema";
 
 @Schema()
 
 export class Tasks {
-    @Prop()
+    @Prop({required: true})
     title: string
 
     @Prop()
@@ -17,9 +17,11 @@ export class Tasks {
     @Prop()
     file: string
 
-    @Prop()
+    @Prop({required: true})
     isCompleted: boolean
 
-    @Prop({type: mongoose.Schema.Types.ObjectId, ref: "Tags"})
+    @Prop([{type: mongoose.Schema.Types.ObjectId, ref: "Tags"}, {default: []} ])
     tags: Array<Tags>
 }
+
+export const TasksSchema = SchemaFactory.createForClass(Tasks)
