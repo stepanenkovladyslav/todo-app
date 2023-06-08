@@ -2,13 +2,18 @@ import { Injectable, NotFoundException } from "@nestjs/common";
 import { Users } from "./schemas/users.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
+import * as jwt from "jsonwebtoken"
+import { createTaskDTO } from "src/tasks/dto/createTask.dto";
+import { Tasks } from "src/tasks/schemas/tasks.schema";
+import { Mode } from "fs";
+import { authorizeDTO } from "src/auth/dto/authorizeDTO";
 
 
 
 @Injectable()
 
 export class UsersService {
-    constructor(@InjectModel(Users.name) private readonly userModel : Model<Users>) {}
+    constructor(@InjectModel(Users.name) private readonly userModel : Model<Users>, @InjectModel(Tasks.name) private readonly tasksModel: Model<Tasks>) {}
 
    
     async getInfo(id: number) {
@@ -27,7 +32,20 @@ export class UsersService {
         throw new NotFoundException()
     }
 
-    
+    async createTask(body: createTaskDTO, headers: authorizeDTO) {
+        const token = headers.authorization.split(" ")[1];
+        const verifier = jwt.verify(token, process.env.SECRET_KEY);
+       
+        if (typeof verifier === 'object') {
+            const user = await this.userModel.findOne({username: verifier.username})
+            const task = await this.tasksModel.create({...body});
+            console.log(user)
+            user.tasks.push(task)
+            await user.save()
+            return user;
+        }
+
+    }
 
    
 }

@@ -11,7 +11,8 @@ import { Tags } from "src/tags/schemas/tags.schema";
 @Module({
     imports: [MongooseModule.forFeature([{name: Tasks.name, schema: TasksSchema}]), TagsModule],
     controllers: [TasksController],
-    providers: [TasksService]
+    providers: [TasksService],
+    exports: [MongooseModule.forFeature([{name: Tasks.name, schema: TasksSchema}])]
 })
 
 export class TasksModule {}
