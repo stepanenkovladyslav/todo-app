@@ -1,8 +1,9 @@
 import { Inject, Injectable, NotFoundException } from "@nestjs/common";
+const fs = require("fs")
+import * as path from 'path';
 import { createTaskDTO } from "./dto/createTask.dto";
 import { getOneTaskDTO } from "./dto/getOne.dto";
 import { changeTaskInfo } from "./dto/changeTaskInfo.dto";
-import { join } from "path";
 import { createReadStream } from "fs";
 import { addTagToTaskDTO } from "./dto/addTagToTaskDTO.dto";
 import { Response } from "express";
@@ -81,25 +82,24 @@ export class TasksService {
             return task;
         } 
         throw new NotFoundException()
-        //test
     }
 
     async changeDeadline(body: changeTaskInfo) {
         const {id, newDeadline} = body;
         const task = await this.taskModel.findOne({_id: id});
         if (task) {
-            task.deadline = newDeadline;
+            task.deadline = new Date(newDeadline);
+            console.log(task)
             await task.save()
             return task;
         }
         throw new NotFoundException()
-        // test
     }
 
     async getFiles(id: getOneTaskDTO, res: Response) {
         const task: Tasks = await this.taskModel.findOne({_id: id});
         if (task) {
-            const filePath = join(process.cwd(), 'uploads', task.file);
+            const filePath = path.join(process.cwd(), 'uploads', task.file);
             res.sendFile(filePath)
         }
     }
@@ -112,16 +112,17 @@ export class TasksService {
             return task;
         }
         throw new NotFoundException()
-        //test
     }
 
     async deleteFile(id : getOneTaskDTO) {
-        // const task = await this.taskModel.findOne({where: {id}});
-        // if (task) {
-        //     task.file = null;
-        //     await task.save()
-        //     return task;
-        // }
+        const task = await this.taskModel.findOne({_id: id });
+        if (task) {
+            const filename = task.file;
+            fs.unlink(path.join(__dirname, "..", "..", "uploads", filename) , (err) => { if (err) throw new NotFoundException()});
+            task.file = "";
+            await task.save()
+            return task;
+        }
     }
 
     async changeCompletionStatus(body: changeTaskInfo) {
@@ -133,7 +134,6 @@ export class TasksService {
             return task
         } 
         throw new NotFoundException()
-        //test
     }
 
     async deleteTask(id: getOneTaskDTO) {
@@ -143,6 +143,5 @@ export class TasksService {
             return {message: "Task Deleted"} 
         } 
         throw new NotFoundException()
-        //test
     }
 }

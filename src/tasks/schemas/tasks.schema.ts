@@ -11,7 +11,7 @@ export class Tasks {
     @Prop()
     description: string
 
-    @Prop()
+    @Prop({default: Date.now()})
     deadline: Date
 
     @Prop()
