@@ -10,8 +10,8 @@ export class UserController {
     constructor(private readonly userService: UsersService) {}
 
     @Post('create')
-    async createAccount(@Body() body: createAccountDTO, @Session() session: Record<string, any>) {
-        return this.userService.createAccount(body, session)
+    async createAccount(@Body() body: createAccountDTO ) {
+        return this.userService.createAccount(body)
     }
 
     @Get(":id")
