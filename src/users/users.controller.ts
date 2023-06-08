@@ -14,6 +14,11 @@ export class UserController {
     async getInfo(@Param("id") id : number) {
         return this.userService.getInfo(id)
     }
+
+    @Get('tasks/:id')
+    async getTasksForUser(@Param("id") id: number) {
+        return this.userService.getTasksForUser(id)
+    }
     
     @Post('create')
     async createAccount(@Body() body: createAccountDTO ) {

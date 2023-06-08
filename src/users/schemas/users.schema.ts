@@ -16,7 +16,7 @@ export class Users {
     @Prop({required: true}) 
     password: string
 
-    @Prop({type: mongoose.Schema.Types.ObjectId, ref: "Tasks"})
+    @Prop([{type: mongoose.Schema.Types.ObjectId, ref: "Tasks"}, {default: []}]) 
     tasks: Array<Tasks>
 }
 
