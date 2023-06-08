@@ -107,8 +107,7 @@ export class TasksService {
     async addFile(id : getOneTaskDTO, file: Express.Multer.File): Promise<Tasks> {
         const task = await this.taskModel.findOne({_id: id});
         if (task) {
-            console.log(file)
-            task.file = `${file.filename}.${file.originalname.split(".")[1]}`;
+            task.file = `${file.filename}`;
             await task.save()
             return task;
         }

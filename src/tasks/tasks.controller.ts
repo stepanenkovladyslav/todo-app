@@ -6,6 +6,8 @@ import { changeTaskInfo } from "./dto/changeTaskInfo.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { addTagToTaskDTO } from "./dto/addTagToTaskDTO.dto";
 import {Response} from "express";
+import { diskStorage } from "multer";
+import { extname } from "path";
 
 @Controller("tasks")
 
@@ -38,14 +40,17 @@ export class TasksController {
    } 
 
    @Post("add-file/:id")
-   @UseInterceptors(FileInterceptor('file', {dest: "./uploads"}))
+   @UseInterceptors(FileInterceptor('file', {storage: diskStorage({destination: "./uploads", filename: (req, file, cb) => {
+    const randomName = Date.now() + Math.round(Math.random() * 200);
+    cb(null, `${randomName}${extname(file.originalname)}`)
+   }})}))
    async addFile(@Param("id") id:getOneTaskDTO, 
     @UploadedFile(new ParseFilePipe(
         {validators: [
             new FileTypeValidator({fileType: /^(text\/plain|application\/pdf)$/ })
         ]})) 
         file: Express.Multer.File) {
-    // return this.taskService.addFile(id, file);
+    return this.taskService.addFile(id, file);
    }
 
    @Put("change-title")
