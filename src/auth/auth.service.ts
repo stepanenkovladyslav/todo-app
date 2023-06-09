@@ -18,13 +18,12 @@ const generateJwt = (username:string, email:string) => {
 export class AuthService {
     constructor(@InjectModel(Users.name) private usersModel: Model<Users>) {}
 
-    async createAccount(body: createAccountDTO) {
+    async createAccount(body: createAccountDTO): Promise<string> {
         let {username, email, password} = body;
         password = await bcrypt.hash(password, 10); 
-        const user = await this.usersModel.create({username, email, password})
-         await user.save()
-         const token = generateJwt(user.username, user.email)
-         return token;
+        const user:Users = await this.usersModel.create({username, email, password})
+        const token = generateJwt(user.username, user.email)
+        return token;
      }
 
     async login(body: loginDTO) {

@@ -31,6 +31,7 @@ export class TasksService {
     }
 
     async getOne(id: getOneTaskDTO) {
+        console.log("first")
         const task = await this.taskModel.findOne({_id:id})
         if (task) {
             return task
@@ -104,7 +105,8 @@ export class TasksService {
         }
     }
 
-    async addFile(id : getOneTaskDTO, file: Express.Multer.File): Promise<Tasks> {
+    async addFile(body : getOneTaskDTO, file: Express.Multer.File): Promise<Tasks> {
+        const {id} = body;
         const task = await this.taskModel.findOne({_id: id});
         if (task) {
             task.file = `${file.filename}`;

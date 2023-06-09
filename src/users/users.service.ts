@@ -39,7 +39,6 @@ export class UsersService {
         if (typeof verifier === 'object') {
             const user = await this.userModel.findOne({username: verifier.username})
             const task = await this.tasksModel.create({...body});
-            console.log(user)
             user.tasks.push(task)
             await user.save()
             return user;

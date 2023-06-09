@@ -39,18 +39,18 @@ export class TasksController {
     return this.taskService.createTask(dto)
    } 
 
-   @Post("add-file/:id")
+   @Post("add-file")
    @UseInterceptors(FileInterceptor('file', {storage: diskStorage({destination: "./uploads", filename: (req, file, cb) => {
     const randomName = Date.now() + Math.round(Math.random() * 200);
     cb(null, `${randomName}${extname(file.originalname)}`)
    }})}))
-   async addFile(@Param("id") id:getOneTaskDTO, 
+   async addFile(@Body("id") body:getOneTaskDTO, 
     @UploadedFile(new ParseFilePipe(
         {validators: [
             new FileTypeValidator({fileType: /^(text\/plain|application\/pdf)$/ })
         ]})) 
         file: Express.Multer.File) {
-    return this.taskService.addFile(id, file);
+    return this.taskService.addFile(body, file);
    }
 
    @Put("change-title")
