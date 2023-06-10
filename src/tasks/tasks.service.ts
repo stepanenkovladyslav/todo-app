@@ -31,10 +31,12 @@ export class TasksService {
     }
 
     async getOne(id: getOneTaskDTO) {
-            const task = await this.taskModel.findOne({_id:id})
-            if (task) {
-                return task
-            }
+        console.log("first")
+        const task = await this.taskModel.findOne({_id:id})
+        if (task) {
+            return task
+        } 
+        throw new NotFoundException()
     }
 
     async getTagsBy(id:getOneTaskDTO) {
