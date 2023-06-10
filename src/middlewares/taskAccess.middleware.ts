@@ -1,4 +1,4 @@
-import { ForbiddenException, Inject, Injectable, NestMiddleware, UnauthorizedException } from "@nestjs/common";
+import { ForbiddenException, Inject, Injectable, NestMiddleware, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { Users } from "src/users/schemas/users.schema";
@@ -21,12 +21,28 @@ export class TaskAccessMiddleware implements NestMiddleware{
         }
        } else if (req.method === "GET" && !req['params'].id) {
         const user = await this.userModel.findOne({username: req['user'].username});
-        req['user'] = user; 
-        next()
-       } else if (req.method === 'POST' || req.method === "PUT" && req.body) {
-        const user = await this.userModel.findOne({username: req['user'].username});
-        req['user'] = user;
-        next()
+        if (user) {
+            req['user'] = user; 
+            next()
+        } else {
+            throw new UnauthorizedException()
+        }
+       } else if (req.method === 'POST' || req.method === "PUT") {
+            const user = await this.userModel.findOne({username: req['user'].username});
+            req['user'] = user;
+            if (req.body['id']) {
+                const taskId = req.body['id'];
+                const isAvailable = user.tasks.includes(taskId);
+                console.log(taskId, isAvailable)
+                if (isAvailable) {
+                    next()
+                } else {
+                    throw new UnauthorizedException()
+                }
+            } else {
+                next()
+            }
+            
        }
     }
 }

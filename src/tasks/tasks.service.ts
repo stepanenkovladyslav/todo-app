@@ -37,7 +37,6 @@ export class TasksService {
     }
 
     async getOne(id: getOneTaskDTO) {
-        console.log("first")
         const task = await this.taskModel.findOne({_id:id})
         if (task) {
             return task
@@ -59,8 +58,8 @@ export class TasksService {
     }
     
     async addTag(body: addTagToTaskDTO) {
-        const {tagId, taskId} = body;
-        const task = await this.taskModel.findOne({_id: taskId})
+        const {tagId, id} = body;
+        const task = await this.taskModel.findOne({_id: id})
         const tag = await this.tagsModel.findOne({_id: tagId})
         if (task && tag) {
             task.tags.push(tag);

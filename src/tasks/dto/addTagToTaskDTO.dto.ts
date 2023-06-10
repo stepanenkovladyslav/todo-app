@@ -1,4 +1,4 @@
 export class addTagToTaskDTO {
-    readonly taskId: number
+    readonly id: number
     readonly tagId: number
 }

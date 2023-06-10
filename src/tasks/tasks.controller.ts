@@ -43,7 +43,7 @@ export class TasksController {
     const randomName = Date.now() + Math.round(Math.random() * 200);
     cb(null, `${randomName}${extname(file.originalname)}`)
    }})}))
-   async addFile(@Body("id") body:getOneTaskDTO, 
+   async addFile( @Body() body:getOneTaskDTO, 
     @UploadedFile(new ParseFilePipe(
         {validators: [
             new FileTypeValidator({fileType: /^(text\/plain|application\/pdf)$/ })
