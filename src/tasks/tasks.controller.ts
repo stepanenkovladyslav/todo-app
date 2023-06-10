@@ -14,10 +14,9 @@ import { extname } from "path";
 export class TasksController {
     constructor(private readonly taskService: TasksService) {}
    @Get()
-   async getAll() {
-    return this.taskService.getAll()
+   async getAll(@Req() req: Request) {
+    return this.taskService.getAll(req)
    }
-
 
    @Get(":id")
    async getOne(@Param("id") id:getOneTaskDTO) {

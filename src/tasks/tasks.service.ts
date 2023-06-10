@@ -22,12 +22,18 @@ export class TasksService {
 
     async createTask(dto: createTaskDTO, req: Request) {
         const task = await this.taskModel.create({ ...dto });
+        req['user'].tasks.push(task);
+        await req['user'].save()
         return task
     }
 
-    async getAll() {
-        const tasks = await this.taskModel.find();
-        return tasks;
+    async getAll(req: Request) {
+        const userTaskId = req['user'].tasks;
+        const userTasks = Promise.all(userTaskId.map(async (taskId:string, idx:number) => {
+            const task = await this.taskModel.findOne({_id: taskId});
+            return task;
+        }))
+        return userTasks;
     }
 
     async getOne(id: getOneTaskDTO) {

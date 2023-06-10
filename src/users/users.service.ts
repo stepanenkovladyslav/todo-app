@@ -13,7 +13,7 @@ import { authorizeDTO } from "src/auth/dto/authorizeDTO";
 @Injectable()
 
 export class UsersService {
-    constructor(@InjectModel(Users.name) private readonly userModel : Model<Users>, @InjectModel(Tasks.name) private readonly tasksModel: Model<Tasks>) {}
+    constructor(@InjectModel(Users.name) private readonly userModel : Model<Users>) {}
 
    
     async getInfo(id: number) {
@@ -32,19 +32,4 @@ export class UsersService {
         throw new NotFoundException()
     }
 
-    async createTask(body: createTaskDTO, headers: authorizeDTO) {
-        const token = headers.authorization.split(" ")[1];
-        const verifier = jwt.verify(token, process.env.SECRET_KEY);
-       
-        if (typeof verifier === 'object') {
-            const user = await this.userModel.findOne({username: verifier.username})
-            const task = await this.tasksModel.create({...body});
-            user.tasks.push(task)
-            await user.save()
-            return user;
-        }
-
-    }
-
-   
 }

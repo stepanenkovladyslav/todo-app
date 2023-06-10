@@ -18,8 +18,4 @@ export class UserController {
         return this.userService.getTasksForUser(id)
     }
 
-    @Post('create-task')
-    async createTask(@Body() body: createTaskDTO, @Headers() headers: authorizeDTO) {
-        return this.userService.createTask(body, headers)
-    }
 }

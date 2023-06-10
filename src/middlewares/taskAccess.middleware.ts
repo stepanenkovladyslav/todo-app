@@ -9,15 +9,20 @@ import { UsersService } from "src/users/users.service";
 export class TaskAccessMiddleware implements NestMiddleware{
     constructor(@InjectModel(Users.name) private readonly userModel : Model<Users>) {}
     async use(req: Request, res: Response, next: (error?: any) => void) {
-       if (req.method === "GET" || req.method === "DELETE" && req['params']) {
+       if (req.method === "GET" && req['params'].id || req.method === "DELETE" && req['params'].id) {
         const taskId = req['params'].id;
         const user = await this.userModel.findOne({username: req['user'].username});
         const isAvailable = user.tasks.includes(taskId)
         req['user'] = user;
         if (isAvailable) {
             next()
-        } 
-        throw new UnauthorizedException()
+        } else {
+            throw new UnauthorizedException()
+        }
+       } else if (req.method === "GET" && !req['params'].id) {
+        const user = await this.userModel.findOne({username: req['user'].username});
+        req['user'] = user; 
+        next()
        } else if (req.method === 'POST' || req.method === "PUT" && req.body) {
         const user = await this.userModel.findOne({username: req['user'].username});
         req['user'] = user;
