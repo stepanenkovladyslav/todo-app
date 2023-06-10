@@ -18,6 +18,7 @@ export class Users {
 
     @Prop([{type: mongoose.Schema.Types.ObjectId, ref: "Tasks"}, {default: []}]) 
     tasks: Array<Tasks>
+
 }
 
 export const UsersSchema = SchemaFactory.createForClass(Users);
