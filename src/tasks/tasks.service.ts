@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 const fs = require("fs")
 import * as path from 'path';
 import { createTaskDTO } from "./dto/createTask.dto";
@@ -12,12 +12,13 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { NotFoundError } from "rxjs";
 import { Tags } from "src/tags/schemas/tags.schema";
+import { Users } from "src/users/schemas/users.schema";
 
 @Injectable()
 
 export class TasksService {
     constructor(@InjectModel(Tasks.name) private taskModel: Model<Tasks>,
-    @InjectModel(Tags.name) private tagsModel: Model<Tags>)
+    @InjectModel(Tags.name) private tagsModel: Model<Tags>, @InjectModel(Users.name) private usersModel: Model<Users>)
     {}
 
     async createTask(dto: createTaskDTO, req: Request) {
@@ -110,15 +111,20 @@ export class TasksService {
         }
     }
 
-    async addFile(body : getOneTaskDTO, file: Express.Multer.File): Promise<Tasks> {
+    async addFile(body : getOneTaskDTO, file: Express.Multer.File, req: Request): Promise<Tasks> {
         const {id} = body;
-        const task = await this.taskModel.findOne({_id: id});
-        if (task) {
-            task.file = `${file.filename}`;
-            await task.save()
-            return task;
+        const isAvailable = req['user'].tasks.includes(id);
+        if (isAvailable) {
+            const task = await this.taskModel.findOne({_id: id});
+            if (task) {
+                task.file = `${file.filename}`;
+                await task.save()
+                return task;
+            }
+            throw new NotFoundException()
+        } else {
+            throw new UnauthorizedException()
         }
-        throw new NotFoundException()
     }
 
     async deleteFile(id : getOneTaskDTO) {
@@ -143,10 +149,11 @@ export class TasksService {
         throw new NotFoundException()
     }
 
-    async deleteTask(id: getOneTaskDTO) {
+    async deleteTask(id: getOneTaskDTO, req: Request) {
         const task = await this.taskModel.findOne({_id: id});
         if (task) {
-            task.deleteOne()
+           await task.deleteOne()
+            await this.usersModel.updateMany({}, { $pull: {tasks: task._id}})
             return {message: "Task Deleted"} 
         } 
         throw new NotFoundException()

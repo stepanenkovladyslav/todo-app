@@ -48,8 +48,8 @@ export class TasksController {
         {validators: [
             new FileTypeValidator({fileType: /^(text\/plain|application\/pdf)$/ })
         ]})) 
-        file: Express.Multer.File) {
-    return this.taskService.addFile(body, file);
+        file: Express.Multer.File, @Req() req: Request) {
+    return this.taskService.addFile(body, file, req);
    }
 
    @Put("change-title")
@@ -78,8 +78,8 @@ export class TasksController {
    }
 
    @Delete(":id")
-   async deleteTask(@Param("id") id: getOneTaskDTO) {
-    return this.taskService.deleteTask(id)
+   async deleteTask(@Param("id") id: getOneTaskDTO, @Req() req: Request) {
+    return this.taskService.deleteTask(id, req)
    }
 
    @Delete("delete-files/:id") 
