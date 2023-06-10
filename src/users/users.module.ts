@@ -6,8 +6,7 @@ import { Users, UsersSchema } from "./schemas/users.schema";
 import { TasksModule } from "src/tasks/tasks.module";
 
 @Module({
-    imports: [MongooseModule.forFeature([{name: Users.name, schema: UsersSchema}]), forwardRef(()=> TasksModule)
-],
+    imports: [MongooseModule.forFeature([{name: Users.name, schema: UsersSchema}]), TasksModule],
     controllers: [UserController],
     providers: [UsersService],
     exports: [MongooseModule.forFeature([{name: Users.name, schema: UsersSchema}]), UsersService]
