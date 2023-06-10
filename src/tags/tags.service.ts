@@ -5,6 +5,7 @@ import { Tags } from "./schemas/tags.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { TagsSchema } from "./schemas/tags.schema";
+import { Users } from "src/users/schemas/users.schema";
 
 @Injectable()
 

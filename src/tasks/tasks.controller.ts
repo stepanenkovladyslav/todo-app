@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, FileTypeValidator, Get, Param, ParseFilePipe, Post, Put, Res, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, FileTypeValidator, Get, Param, ParseFilePipe, Post, Put, Req, Res, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { TasksService } from "./tasks.service";
 import { createTaskDTO } from "./dto/createTask.dto";
 import { getOneTaskDTO } from "./dto/getOne.dto";
@@ -35,8 +35,8 @@ export class TasksController {
    }
 
    @Post("create")
-   async createTask(@Body() dto: createTaskDTO) {
-    return this.taskService.createTask(dto)
+   async createTask(@Body() dto: createTaskDTO, @Req() req: Request) {
+    return this.taskService.createTask(dto, req)
    } 
 
    @Post("add-file")

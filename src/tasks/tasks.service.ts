@@ -20,7 +20,7 @@ export class TasksService {
     @InjectModel(Tags.name) private tagsModel: Model<Tags>)
     {}
 
-    async createTask(dto: createTaskDTO) {
+    async createTask(dto: createTaskDTO, req: Request) {
         const task = await this.taskModel.create({ ...dto });
         return task
     }

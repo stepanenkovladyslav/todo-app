@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import mongoose, { Mongoose } from "mongoose";
+import { Tags } from "src/tags/schemas/tags.schema";
 import { Tasks } from "src/tasks/schemas/tasks.schema";
 
 export type UsersDocument = Users & Document ;
@@ -18,6 +19,9 @@ export class Users {
 
     @Prop([{type: mongoose.Schema.Types.ObjectId, ref: "Tasks"}, {default: []}]) 
     tasks: Array<Tasks>
+
+    @Prop([{type: mongoose.Schema.Types.ObjectId, ref: "Tags"}, {default: []}])
+    tags: Array<Tags>
 }
 
 export const UsersSchema = SchemaFactory.createForClass(Users);

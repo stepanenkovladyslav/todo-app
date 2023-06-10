@@ -13,10 +13,15 @@ export class TaskAccessMiddleware implements NestMiddleware{
         const taskId = req['params'].id;
         const user = await this.userModel.findOne({username: req['user'].username});
         const isAvailable = user.tasks.includes(taskId)
+        req['user'] = user;
         if (isAvailable) {
             next()
         } 
         throw new UnauthorizedException()
+       } else if (req.method === 'POST' || req.method === "PUT" && req.body) {
+        const user = await this.userModel.findOne({username: req['user'].username});
+        req['user'] = user;
+        next()
        }
     }
 }
