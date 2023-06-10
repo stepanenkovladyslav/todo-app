@@ -40,7 +40,8 @@ export class TagsService {
     async delete(_id: number) {
         const tag = await this.tagsModel.findOne({_id});
         if (tag) {
-            tag.deleteOne()
+            await tag.deleteOne()
+            
             return {message: "Tag was deleted successfully"}
         }
     }

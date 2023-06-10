@@ -7,7 +7,7 @@ import { TasksModule } from "src/tasks/tasks.module";
 import { TagsModule } from "src/tags/tags.module";
 
 @Module({
-    imports: [MongooseModule.forFeature([{name: Users.name, schema: UsersSchema}]), TagsModule],
+    imports: [MongooseModule.forFeature([{name: Users.name, schema: UsersSchema}])],
     controllers: [UserController],
     providers: [UsersService],
     exports: [MongooseModule.forFeature([{name: Users.name, schema: UsersSchema}]), UsersService]

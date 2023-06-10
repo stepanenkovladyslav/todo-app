@@ -11,7 +11,7 @@ export class Tags {
     @Prop({required: true})
     name: string
 
-    @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Tasks'})
+    @Prop([{type: mongoose.Schema.Types.ObjectId, ref: 'Tasks'}, {default: []}])
     tasks: Array<Tasks>;
 }
 

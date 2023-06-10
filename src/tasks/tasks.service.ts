@@ -64,7 +64,9 @@ export class TasksService {
         const tag = await this.tagsModel.findOne({_id: tagId})
         if (task && tag) {
             task.tags.push(tag);
+            tag.tasks.push(task)
             await task.save()
+            await tag.save()
             return task
         }
     }
@@ -153,7 +155,8 @@ export class TasksService {
         const task = await this.taskModel.findOne({_id: id});
         if (task) {
            await task.deleteOne()
-            await this.usersModel.updateMany({}, { $pull: {tasks: task._id}})
+            await this.usersModel.updateOne({_id: req['user'].id}, { $pull: {tasks: task._id}})
+            await this.tagsModel.updateMany({}, {$pull: {tasks: task._id}})
             return {message: "Task Deleted"} 
         } 
         throw new NotFoundException()
