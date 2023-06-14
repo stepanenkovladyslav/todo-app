@@ -22,7 +22,7 @@ export class TasksService {
     {}
 
     async createTask(dto: createTaskDTO, req: Request) {
-        const task = await this.taskModel.create({ ...dto });
+        const task = await this.taskModel.create({ ...dto, user_id: req['user']._id });
         req['user'].tasks.push(task);
         await req['user'].save()
         return task

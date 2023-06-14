@@ -11,6 +11,7 @@ import { AuthMiddleware } from "src/middlewares/auth.middleware";
 import { TaskAccessMiddleware } from "src/middlewares/taskAccess.middleware";
 import { UsersModule } from "src/users/users.module";
 import { UsersService } from "src/users/users.service";
+import { TagsController } from "src/tags/tags.controller";
 
 @Module({
     imports: [MongooseModule.forFeature([{name: Tasks.name, schema: TasksSchema}]), TagsModule, UsersModule],

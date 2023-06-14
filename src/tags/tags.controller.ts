@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Req } from "@nestjs/common";
 import { TagsService } from "./tags.service";
 import { createTagDTO } from "./dto/createTagDTO.dto";
 import { changeTagNameDTO } from "./dto/changeTagNameDTO.dto";
@@ -10,13 +10,13 @@ export class TagsController {
     constructor(private readonly tagsService: TagsService) {}
 
     @Get()
-    async getAll() {
-        return this.tagsService.getAll()
+    async getAll(@Req() req: Request) {
+        return this.tagsService.getAll(req)
     }
 
     @Post("create")
-    async create(@Body() body: createTagDTO) {
-        return this.tagsService.create(body)
+    async create(@Body() body: createTagDTO, @Req() req: Request) {
+        return this.tagsService.create(body, req)
     }
 
     

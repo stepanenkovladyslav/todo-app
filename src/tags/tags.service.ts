@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Inject, Injectable, NotFoundException } from "@nestjs/common";
 import { createTagDTO } from "./dto/createTagDTO.dto";
 import { changeTagNameDTO } from "./dto/changeTagNameDTO.dto";
 import { Tags } from "./schemas/tags.schema";
@@ -12,21 +12,19 @@ import { Users } from "src/users/schemas/users.schema";
 export class TagsService {
     constructor(@InjectModel(Tags.name) private readonly tagsModel : Model<Tags>) {}
 
-    async create(body: createTagDTO) {
+    async create(body: createTagDTO, req: Request) {
        const {name} = body;
        if (name) {
-        const newTag = await this.tagsModel.create({name}) 
+        const newTag = await this.tagsModel.create({name, user_id: req['user']._id}) 
+        req['user'].tags.push(newTag)
+        req['user'].save()
         await newTag.save()
         return newTag;
        } 
     }
 
-    async getAll() {
-        const tags = await this.tagsModel.find()
-        if (tags) {
-            return tags;
-        } 
-        return {message: "There are no tags"}
+    async getAll(req: Request) {
+        return req['user'].tags
     }
 
     async delete(_id: number) {
