@@ -2,10 +2,10 @@ import { Inject, Injectable, NotFoundException, UnauthorizedException } from "@n
 const fs = require("fs")
 import * as path from 'path';
 import { createTaskDTO } from "./dto/createTask.dto";
-import { getOneTaskDTO } from "./dto/getOne.dto";
+import { getOneTaskDTO } from "../tagTasks/dto/getOne.dto";
 import { changeTaskInfo } from "./dto/changeTaskInfo.dto";
 import { createReadStream } from "fs";
-import { addTagToTaskDTO } from "./dto/addTagToTaskDTO.dto";
+import { addTagToTaskDTO } from "../tagTasks/dto/addTagToTaskDTO.dto";
 import { Response } from "express";
 import { Tasks } from "./schemas/tasks.schema";
 import { InjectModel } from "@nestjs/mongoose";
@@ -43,32 +43,6 @@ export class TasksService {
             return task
         } 
         throw new NotFoundException()
-    }
-
-    async getTagsBy(id:getOneTaskDTO) {
-       const task = await this.taskModel.findOne({_id: id}) 
-       if (task) {
-        const tags = task.tags;
-        const allTags = Promise.all(tags.map(( async tagId => {
-            const tag = await this.tagsModel.findOne({_id: tagId});
-            return tag
-        })))
-        return allTags
-       } 
-       throw new NotFoundException()
-    }
-    
-    async addTag(body: addTagToTaskDTO) {
-        const {tagId, id} = body;
-        const task = await this.taskModel.findOne({_id: id})
-        const tag = await this.tagsModel.findOne({_id: tagId})
-        if (task && tag) {
-            task.tags.push(tag);
-            tag.tasks.push(task)
-            await task.save()
-            await tag.save()
-            return task
-        }
     }
 
     async changeTitle(body : changeTaskInfo) {

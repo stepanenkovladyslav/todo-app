@@ -1,10 +1,10 @@
 import { Body, Controller, Delete, FileTypeValidator, Get, Param, ParseFilePipe, Post, Put, Req, Res, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { TasksService } from "./tasks.service";
 import { createTaskDTO } from "./dto/createTask.dto";
-import { getOneTaskDTO } from "./dto/getOne.dto";
+import { getOneTaskDTO } from "../tagTasks/dto/getOne.dto";
 import { changeTaskInfo } from "./dto/changeTaskInfo.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { addTagToTaskDTO } from "./dto/addTagToTaskDTO.dto";
+import { addTagToTaskDTO } from "../tagTasks/dto/addTagToTaskDTO.dto";
 import {Response} from "express";
 import { diskStorage } from "multer";
 import { extname } from "path";
@@ -21,11 +21,6 @@ export class TasksController {
    @Get(":id")
    async getOne(@Param("id") id:getOneTaskDTO) {
     return this.taskService.getOne(id)
-   }
-
-   @Get("/get-tags/:id")
-   async getTagsBy(@Param("id") id: getOneTaskDTO) {
-    return this.taskService.getTagsBy(id)
    }
 
    @Get("get-files/:id")
@@ -70,11 +65,6 @@ export class TasksController {
    @Put("complete")
    async changeCompletionStatus(@Body() body: changeTaskInfo) {
     return this.taskService.changeCompletionStatus(body)
-   }
-
-   @Put("add-tag")
-   async addTag(@Body() body: addTagToTaskDTO) {
-    return this.taskService.addTag(body);
    }
 
    @Delete(":id")

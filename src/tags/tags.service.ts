@@ -29,14 +29,6 @@ export class TagsService {
         return {message: "There are no tags"}
     }
 
-    async getTasksBy(id: number) {
-        const tag = await this.tagsModel.findOne({_id:id})
-        if (tag) {
-            return tag.tasks;
-        }
-        return {message: "There is no such tag"}
-    }
-
     async delete(_id: number) {
         const tag = await this.tagsModel.findOne({_id});
         if (tag) {
