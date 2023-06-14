@@ -21,7 +21,7 @@ export class Tasks {
     @Prop({required: true})
     isCompleted: boolean
 
-    @Prop([{type: mongoose.Schema.Types.ObjectId, ref: 'Users'}, {required: true}])
+    @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Users',required: true})
     user_id: Users
 
     @Prop([{type: mongoose.Schema.Types.ObjectId, ref: "Tags"}, {default: []} ])

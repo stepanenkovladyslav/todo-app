@@ -6,18 +6,20 @@ import { cascadeDeleteService } from "./cascadeDelete.service";
 export class cascadeDeleteController {
     constructor(private readonly deleteService: cascadeDeleteService) {}
 
-    @Delete('/users/:id')
+    @Delete('users/:id')
     async deleteUser(@Param('id') id: string) {
-        this.deleteService.deleteUser(id)
+        return this.deleteService.deleteUser(id)
     }
 
-    @Delete('tasks/:id')
+    @Delete('/tasks/:id')
     async deleteTask(@Req() req: Request, @Param('id') id:string) {
-        this.deleteService.deleteTask(req, id)
+        return this.deleteService.deleteTask(req, id)
     }
 
     @Delete('tags/:id')
     async deleteTag(@Req() req: Request, @Param('id') id:string) {
-        this.deleteService.deleteTag(req, id)
+        return this.deleteService.deleteTag(req, id)
     }
 }
+
+// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1heCIsImVtYWlsIjoibWF4QGdtYWlsLmNvbSIsImlhdCI6MTY4NjczNjc2MSwiZXhwIjoxNjg2NzQzOTYxfQ.V6kzcKFt1avtXcCLCTvEMp06TxPpj--ehfMT2ucnOy0

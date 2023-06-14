@@ -20,25 +20,36 @@ export class cascadeDeleteService {
 
     async deleteTask(req: Request, id: string) {
         const task = await this.taskModel.findOne({_id: id})
+        console.log(task)
         const user = await this.userModel.findOne({username: req['user'].username});
         const tags = task.tags;
-        console.log(task, user);
-        if (user.tasks.includes(task)) {
-            this.taskModel.deleteOne({_id: id});
-            this.userModel.updateOne({username: req['user'].username}, {$pull: {tasks: {_id: id}}})
-            tags.forEach(tag => this.tagModel.updateOne({_id: tag['_id']}, {$pull: {tasks: {_id: id}}}))
+        if (user.tasks.includes(task.id)) {
+            try {
+                const res = await this.taskModel.deleteOne({_id: id});
+                const result = await this.userModel.updateOne({username: req['user'].username}, {$pull: {tasks: id}})
+                const allResult = await Promise.all(tags.map(async tag => {
+                    const tagResult = await this.tagModel.updateOne({_id: tag['_id']}, {$pull: {tasks: id}});
+                    console.log('Update Tag Result:', tagResult);
+                    return tagResult;
+                }));
+                return {message: 'Deleted successfully'}
+            } catch(err) {
+                console.log("first")
+                console.log(err)
+            }
         }
+        return {message: 'Deleted unsuccessfully'}
     }
 
     async deleteTag(req: Request, id: string) {
         const tag = await this.tagModel.findOne({_id: id})
         const user = await this.userModel.findOne({username: req['user'].username});
         const tasks = tag.tasks;
-        console.log(tag, user);
-        if (user.tags.includes(tag)) {
-            this.tagModel.deleteOne({_id: id});
-            this.userModel.updateOne({username: req['user'].username}, {$pull: {tags: {_id: id}}})
-            tasks.forEach(task => this.taskModel.updateOne({_id: task['_id']}, {$pull: {tags: {_id: id}}}))
+        if (user.tags.includes(tag.id)) {
+            const res = await this.tagModel.deleteOne({_id: id});
+            const userRes = await this.userModel.updateOne({username: req['user'].username}, {$pull: {tags: id}})
+            const allResults = await Promise.all(tasks.map(task => this.taskModel.updateOne({_id: task['_id']}, {$pull: {tags: id}})))
+            return {message: "Deleted successfully"}
         }
     }
 }

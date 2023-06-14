@@ -27,7 +27,7 @@ export class TagTasksService {
      async addTagToTask(body: addTagToTaskDTO) {
         const {tagId, id} = body;
         const task = await this.taskModel.findOne({_id: id})
-        const tag = await this.tagsModel.findOne({_id: tagId})
+        const tag = await this.tagsModel.findOne({_id: tagId}) // catch if not found, will throw error
         if (task && tag) {
             task.tags.push(tag);
             tag.tasks.push(task)
