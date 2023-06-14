@@ -18,7 +18,7 @@ export class TaskAccessMiddleware implements NestMiddleware{
         if (isAvailable) {
             next()
         } else {
-            throw new UnauthorizedException()
+            throw new ForbiddenException()
         }
        } else if (req.method === "GET" && !req['params'].id) {
         const user = await this.userModel.findOne({username: req['user'].username});
@@ -38,7 +38,7 @@ export class TaskAccessMiddleware implements NestMiddleware{
                 if (isAvailable) {
                     next()
                 } else {
-                    throw new UnauthorizedException()
+                    throw new ForbiddenException()
                 }
             } else {
                 next()
