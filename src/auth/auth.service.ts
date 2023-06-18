@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
 import * as bcrypt from "bcrypt"
 import * as jwt from "jsonwebtoken"
 import { InjectModel } from "@nestjs/mongoose";
@@ -18,12 +18,16 @@ const generateJwt = (username:string, email:string, expiresIn:string = process.e
 export class AuthService {
     constructor(@InjectModel(Users.name) private usersModel: Model<Users>) {}
 
-    async createAccount(body: createAccountDTO): Promise<string> {
-        let {username, email, password} = body;
-        password = await bcrypt.hash(password, 10); 
-        const user:Users = await this.usersModel.create({username, email, password})
-        const token = generateJwt(user.username, user.email)
-        return token;
+    async createAccount(body: createAccountDTO): Promise<string> { 
+        try {
+            let {username, email, password} = body;
+            password = await bcrypt.hash(password, 10); 
+            const user:Users = await this.usersModel.create({username, email, password})
+            const token = generateJwt(user.username, user.email)
+            return token;
+        } catch(e) {
+            throw new BadRequestException("This username or email is alredy taken")
+        }
      }
 
     async login(body: loginDTO) {
@@ -32,15 +36,20 @@ export class AuthService {
         if (user) {
             const rightPassword = await bcrypt.compare(password, user.password)
             if (rightPassword) {
-            const token = generateJwt(username, user.email)
-                return token;
-            }
-        }
+                const token = generateJwt(username, user.email)
+                    return token;
+            } else {
+                throw new UnauthorizedException("Wrong username or password")
+            } 
+        } else {
+            throw new UnauthorizedException("Wrong username or password")
+        } 
     }
 
     async authorize(headers: authorizeDTO) {
         try {
             const oldToken = headers.authorization.split(" ")[1];
+            console.log(oldToken)
             const user = jwt.verify(oldToken, process.env.SECRET_KEY);
             if (typeof user === "object") {
                 const token = generateJwt(user.username, user.email)
