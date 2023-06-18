@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, UnauthorizedException } from "@nestjs/common";
 import * as bcrypt from "bcrypt"
 import * as jwt from "jsonwebtoken"
 import { InjectModel } from "@nestjs/mongoose";
@@ -8,8 +8,8 @@ import { createAccountDTO } from "./dto/createAccountDTO.dto";
 import { loginDTO } from "./dto/loginDTO";
 import { authorizeDTO } from "./dto/authorizeDTO";
 
-const generateJwt = (username:string, email:string) => {
-    const token = jwt.sign({username: username, email: email}, process.env.SECRET_KEY, {expiresIn: "2h"})
+const generateJwt = (username:string, email:string, expiresIn:string = process.env.JWT_EXPIRATION) => {
+    const token = jwt.sign({username: username, email: email}, process.env.SECRET_KEY, {expiresIn: expiresIn})
     return token
 }
 
@@ -47,7 +47,7 @@ export class AuthService {
                 return token;
             }
         } catch(err) {
-            console.log(err)
+            throw new UnauthorizedException()
         }
     }
 }

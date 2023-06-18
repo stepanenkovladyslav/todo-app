@@ -124,15 +124,4 @@ export class TasksService {
         } 
         throw new NotFoundException()
     }
-
-    async deleteTask(id: getOneTaskDTO, req: Request) {
-        const task = await this.taskModel.findOne({_id: id});
-        if (task) {
-           await task.deleteOne()
-            await this.usersModel.updateOne({_id: req['user'].id}, { $pull: {tasks: task._id}})
-            await this.tagsModel.updateMany({}, {$pull: {tasks: task._id}})
-            return {message: "Task Deleted"} 
-        } 
-        throw new NotFoundException()
-    }
 }

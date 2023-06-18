@@ -27,15 +27,6 @@ export class TagsService {
         return req['user'].tags
     }
 
-    async delete(_id: number) {
-        const tag = await this.tagsModel.findOne({_id});
-        if (tag) {
-            await tag.deleteOne()
-            
-            return {message: "Tag was deleted successfully"}
-        }
-    }
-
     async changeName(body: changeTagNameDTO):Promise<Tags>{
         const {id, newName} = body;
         const tag = await this.tagsModel.findOne({_id :id});

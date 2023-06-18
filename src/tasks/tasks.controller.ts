@@ -67,10 +67,10 @@ export class TasksController {
     return this.taskService.changeCompletionStatus(body)
    }
 
-   @Delete(":id")
-   async deleteTask(@Param("id") id: getOneTaskDTO, @Req() req: Request) {
-    return this.taskService.deleteTask(id, req)
-   }
+//    @Delete(":id")
+//    async deleteTask(@Param("id") id: getOneTaskDTO, @Req() req: Request) {
+//     return this.taskService.deleteTask(id, req)
+//    }
 
    @Delete("delete-files/:id") 
    async deleteFiles(@Param("id") id: getOneTaskDTO) {

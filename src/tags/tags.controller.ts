@@ -20,11 +20,12 @@ export class TagsController {
     }
 
     
-    @Delete(":id")
-    async deleteTag(@Param("id") id: number) {
-        return this.tagsService.delete(id)
-    }
+    // @Delete(":id")
+    // async deleteTag(@Param("id") id: number) {
+    //     return this.tagsService.delete(id)
+    // }
 
+ 
     @Put()
     async changeName(@Body() body: changeTagNameDTO) {
         return this.tagsService.changeName(body)
