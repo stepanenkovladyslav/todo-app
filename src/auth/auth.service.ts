@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { BadRequestException, Injectable, InternalServerErrorException, UnauthorizedException } from "@nestjs/common";
 import * as bcrypt from "bcrypt"
 import * as jwt from "jsonwebtoken"
 import { InjectModel } from "@nestjs/mongoose";
@@ -30,23 +30,27 @@ export class AuthService {
         }
      }
 
-    async login(body: loginDTO) {
-        const {username, password} = body;
-        const user = await this.usersModel.findOne({username: username})
-        if (user) {
-            const rightPassword = await bcrypt.compare(password, user.password)
-            if (rightPassword) {
-                const token = generateJwt(username, user.email)
-                    return token;
+    async login(body: loginDTO):Promise<string> {
+        try {
+            const {username, password} = body;
+            const user = await this.usersModel.findOne({username: username})
+            if (user) {
+                const rightPassword = await bcrypt.compare(password, user.password)
+                if (rightPassword) {
+                    const token = generateJwt(username, user.email)
+                        return token;
+                } else {
+                    throw new UnauthorizedException("Wrong username or password")
+                } 
             } else {
                 throw new UnauthorizedException("Wrong username or password")
             } 
-        } else {
-            throw new UnauthorizedException("Wrong username or password")
-        } 
+        } catch(e){
+            throw new InternalServerErrorException()
+        }
     }
 
-    async authorize(headers: authorizeDTO) {
+    async authorize(headers: authorizeDTO):Promise<string> {
         try {
             const oldToken = headers.authorization.split(" ")[1];
             console.log(oldToken)

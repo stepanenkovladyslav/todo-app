@@ -1,7 +1,10 @@
-export class changeTaskInfo {
-    id: number
+import { IsNotEmpty, IsOptional, IsString} from "class-validator"
+
+export class changeTitleDTO{
+    @IsString()
+    @IsNotEmpty()
+    id: string
+    @IsString()
+    @IsNotEmpty()
     newTitle: string
-    newDescription: string
-    newDeadline: Date
-    isCompleted: boolean
 }

@@ -19,18 +19,14 @@ export class TagAccessMiddleware implements NestMiddleware {
         }
        } else if (req.method === "GET" && !req['params'].id) {
         const user = await this.userModel.findOne({username: req['user'].username});
-        if (user) {
             req['user'] = user; 
             next()
-        } else {
-            throw new UnauthorizedException()
-        }
        } else if (req.method === "PUT" || req.method === "POST") {
             const user = await this.userModel.findOne({username: req['user'].username});
             req['user'] = user;
             if (req.body['id']) {
                 const tagId = req.body['id'];
-                const isAvailable = user.tasks.includes(tagId);
+                const isAvailable = user.tags.includes(tagId);
                 if (isAvailable) {
                     next()
                 } else {

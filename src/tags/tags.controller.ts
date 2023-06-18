@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Req } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Req, UsePipes, ValidationPipe } from "@nestjs/common";
 import { TagsService } from "./tags.service";
 import { createTagDTO } from "./dto/createTagDTO.dto";
 import { changeTagNameDTO } from "./dto/changeTagNameDTO.dto";
@@ -15,6 +15,7 @@ export class TagsController {
     }
 
     @Post("create")
+    @UsePipes(new ValidationPipe())
     async create(@Body() body: createTagDTO, @Req() req: Request) {
         return this.tagsService.create(body, req)
     }
@@ -27,6 +28,7 @@ export class TagsController {
 
  
     @Put()
+    @UsePipes(new ValidationPipe())
     async changeName(@Body() body: changeTagNameDTO) {
         return this.tagsService.changeName(body)
     }

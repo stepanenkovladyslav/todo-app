@@ -1,13 +1,16 @@
-import { Body, Controller, Delete, FileTypeValidator, Get, Param, ParseFilePipe, Post, Put, Req, Res, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, FileTypeValidator, Get, Param, ParseFilePipe, Post, Put, Req, Res, UploadedFile, UseInterceptors, UsePipes, ValidationPipe } from "@nestjs/common";
 import { TasksService } from "./tasks.service";
 import { createTaskDTO } from "./dto/createTask.dto";
 import { getOneTaskDTO } from "../tagTasks/dto/getOne.dto";
-import { changeTaskInfo } from "./dto/changeTaskInfo.dto";
+import { changeTitleDTO } from "./dto/changeTaskInfo.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { addTagToTaskDTO } from "../tagTasks/dto/addTagToTaskDTO.dto";
 import {Response} from "express";
 import { diskStorage } from "multer";
 import { extname } from "path";
+import { ChangeDescriptionDTO } from "./dto/changeDescription.dto";
+import { ChangeDeadlineDTO } from "./dto/changeDeadline.dto";
+import { changeCompletedDTO } from "./dto/changeCompleted.dto";
 
 @Controller("tasks")
 
@@ -19,16 +22,19 @@ export class TasksController {
    }
 
    @Get(":id")
+   @UsePipes(new ValidationPipe())
    async getOne(@Param("id") id:getOneTaskDTO) {
     return this.taskService.getOne(id)
    }
 
    @Get("get-files/:id")
-   async getFiles(@Param("id") id: getOneTaskDTO, @Res() res: Response) {
-    return this.taskService.getFiles(id, res)
+   @UsePipes(new ValidationPipe())
+   async getFiles(@Param() params: getOneTaskDTO, @Res() res: Response) {
+    return this.taskService.getFiles(params, res)
    }
 
    @Post("create")
+   @UsePipes(new ValidationPipe())
    async createTask(@Body() dto: createTaskDTO, @Req() req: Request) {
     return this.taskService.createTask(dto, req)
    } 
@@ -48,22 +54,26 @@ export class TasksController {
    }
 
    @Put("change-title")
-   async changeTitle(@Body() body: changeTaskInfo) {
+   @UsePipes(new ValidationPipe())
+   async changeTitle(@Body() body: changeTitleDTO) {
     return this.taskService.changeTitle(body)
    }
 
    @Put("change-desc")
-   async changeDescription(@Body() body: changeTaskInfo) {
+   @UsePipes(new ValidationPipe())
+   async changeDescription(@Body() body: ChangeDescriptionDTO) {
     return this.taskService.changeDescription(body)
    }
 
    @Put("change-deadline")
-   async changeDeadline(@Body() body: changeTaskInfo) {
+   @UsePipes(new ValidationPipe())
+   async changeDeadline(@Body() body: ChangeDeadlineDTO) {
     return this.taskService.changeDeadline(body)
    }
 
    @Put("complete")
-   async changeCompletionStatus(@Body() body: changeTaskInfo) {
+   @UsePipes(new ValidationPipe())
+   async changeCompletionStatus(@Body() body: changeCompletedDTO) {
     return this.taskService.changeCompletionStatus(body)
    }
 

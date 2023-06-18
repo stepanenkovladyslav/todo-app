@@ -13,7 +13,6 @@ export class TaskAccessMiddleware implements NestMiddleware{
         const taskId = req['params'].id;
         const user = await this.userModel.findOne({username: req['user'].username});
         const isAvailable = user.tasks.includes(taskId)
-        console.log(isAvailable)
         req['user'] = user;
         if (isAvailable) {
             next()
@@ -22,19 +21,14 @@ export class TaskAccessMiddleware implements NestMiddleware{
         }
        } else if (req.method === "GET" && !req['params'].id) {
         const user = await this.userModel.findOne({username: req['user'].username});
-        if (user) {
             req['user'] = user; 
             next()
-        } else {
-            throw new UnauthorizedException()
-        }
        } else if (req.method === 'POST' || req.method === "PUT") {
             const user = await this.userModel.findOne({username: req['user'].username});
             req['user'] = user;
             if (req.body['id']) {
                 const taskId = req.body['id'];
                 const isAvailable = user.tasks.includes(taskId);
-                console.log(taskId, isAvailable)
                 if (isAvailable) {
                     next()
                 } else {

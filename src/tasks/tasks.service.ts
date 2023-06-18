@@ -1,9 +1,9 @@
-import { Inject, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { ForbiddenException, Inject, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from "@nestjs/common";
 const fs = require("fs")
 import * as path from 'path';
 import { createTaskDTO } from "./dto/createTask.dto";
 import { getOneTaskDTO } from "../tagTasks/dto/getOne.dto";
-import { changeTaskInfo } from "./dto/changeTaskInfo.dto";
+import {  changeTitleDTO } from "./dto/changeTaskInfo.dto";
 import { createReadStream } from "fs";
 import { addTagToTaskDTO } from "../tagTasks/dto/addTagToTaskDTO.dto";
 import { Response } from "express";
@@ -13,6 +13,9 @@ import { Model } from "mongoose";
 import { NotFoundError } from "rxjs";
 import { Tags } from "src/tags/schemas/tags.schema";
 import { Users } from "src/users/schemas/users.schema";
+import { ChangeDescriptionDTO } from "./dto/changeDescription.dto";
+import { ChangeDeadlineDTO } from "./dto/changeDeadline.dto";
+import { changeCompletedDTO } from "./dto/changeCompleted.dto";
 
 @Injectable()
 
@@ -22,84 +25,104 @@ export class TasksService {
     {}
 
     async createTask(dto: createTaskDTO, req: Request) {
-        const task = await this.taskModel.create({ ...dto, user_id: req['user']._id });
-        req['user'].tasks.push(task);
-        await req['user'].save()
-        return task
+        try {
+            const task = await this.taskModel.create({ ...dto, user_id: req['user']._id });
+            req['user'].tasks.push(task);
+            await req['user'].save()
+            return task
+        } catch(e) {
+            throw new InternalServerErrorException()
+        }
     }
 
     async getAll(req: Request) {
+        try {
         const userTaskId = req['user'].tasks;
         const userTasks = Promise.all(userTaskId.map(async (taskId:string, idx:number) => {
             const task = await this.taskModel.findOne({_id: taskId});
             return task;
         }))
         return userTasks;
+        } catch (e) {
+            throw new InternalServerErrorException()
+        }
     }
 
     async getOne(id: getOneTaskDTO) {
-        const task = await this.taskModel.findOne({_id:id})
-        if (task) {
+        try {
+            const task = await this.taskModel.findOne({_id:id})
             return task
-        } 
-        throw new NotFoundException()
+        } catch(e) {
+            throw new InternalServerErrorException()
+        }
     }
 
-    async changeTitle(body : changeTaskInfo) {
-        const {id, newTitle} = body;
-        const task = await this.taskModel.findOne({_id: id});
-        if (task) {
+    async changeTitle(body : changeTitleDTO) {
+        try {
+            const {id, newTitle} = body;
+            const task = await this.taskModel.findOne({_id: id});
             task.title = newTitle;
             await task.save()
             return task;
-        }  
-        throw new NotFoundException()
+        } catch(e) {
+            throw new InternalServerErrorException()
+        }
     }
 
-    async changeDescription(body:changeTaskInfo) {
-        const {id, newDescription} = body;
-        const task = await this.taskModel.findOne({_id: id});
-        if (task) {
+    async changeDescription(body:ChangeDescriptionDTO) {
+        try {
+            const {id, newDescription} = body;
+            const task = await this.taskModel.findOne({_id: id});
             task.description = newDescription;
             await task.save()
             return task;
-        } 
-        throw new NotFoundException()
+        } catch(e) {
+            throw new InternalServerErrorException()
+        }
     }
 
-    async changeDeadline(body: changeTaskInfo) {
-        const {id, newDeadline} = body;
-        const task = await this.taskModel.findOne({_id: id});
-        if (task) {
+    async changeDeadline(body: ChangeDeadlineDTO) {
+        try {
+            const {id, newDeadline} = body;
+            const task = await this.taskModel.findOne({_id: id});
             task.deadline = new Date(newDeadline);
             console.log(task)
             await task.save()
             return task;
+        } catch(e) {
+            throw new InternalServerErrorException() 
         }
-        throw new NotFoundException()
     }
 
-    async getFiles(id: getOneTaskDTO, res: Response) {
-        const task: Tasks = await this.taskModel.findOne({_id: id});
-        if (task) {
+    async getFiles(params: getOneTaskDTO, res: Response) {
+        try {
+            const task: Tasks = await this.taskModel.findOne({_id: params.id});
             const filePath = path.join(process.cwd(), 'uploads', task.file);
             res.sendFile(filePath)
+        } catch(e) {
+            throw new InternalServerErrorException()
         }
     }
 
     async addFile(body : getOneTaskDTO, file: Express.Multer.File, req: Request): Promise<Tasks> {
-        const {id} = body;
-        const isAvailable = req['user'].tasks.includes(id);
-        if (isAvailable) {
-            const task = await this.taskModel.findOne({_id: id});
-            if (task) {
-                task.file = `${file.filename}`;
-                await task.save()
-                return task;
+        try {
+            const {id} = body;
+            const isAvailable = req['user'].tasks.includes(id);
+            if (isAvailable) {
+                const task = await this.taskModel.findOne({_id: id});
+                if (task) {
+                    task.file = `${file.filename}`;
+                    await task.save()
+                    return task;
+                } else {
+                    throw new NotFoundException()
+                }
+            } else {
+                console.log("first")
+                throw new ForbiddenException()
             }
-            throw new NotFoundException()
-        } else {
-            throw new UnauthorizedException()
+        } catch(e) {
+            throw new InternalServerErrorException()
         }
     }
 
@@ -114,14 +137,15 @@ export class TasksService {
         }
     }
 
-    async changeCompletionStatus(body: changeTaskInfo) {
-       const {id, isCompleted} = body 
-        const task = await this.taskModel.findOne({_id: id});
-        if (task) {
+    async changeCompletionStatus(body: changeCompletedDTO) {
+       try {
+            const {id, isCompleted} = body 
+            const task = await this.taskModel.findOne({_id: id});
             task.isCompleted = isCompleted;
             await task.save()
             return task
-        } 
-        throw new NotFoundException()
+       } catch(e) {
+            throw new InternalServerErrorException()
+       }
     }
 }
