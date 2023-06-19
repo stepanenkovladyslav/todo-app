@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Param, Put } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Put, Req, UsePipes, ValidationPipe } from '@nestjs/common';
 import { getOneTaskDTO } from './dto/getOne.dto';
 import { TagTasksService } from './tagTasks.service';
 import { addTagToTaskDTO } from './dto/addTagToTaskDTO.dto';
@@ -8,18 +8,20 @@ export class TagTasksController {
     constructor(private readonly tagTaskService: TagTasksService) {}
     
     @Get("/get-tags/:id")
-    async getTagsByTask(@Param("id") id: getOneTaskDTO) {
-    return this.tagTaskService.getTagsByTask(id)
+    @UsePipes(new ValidationPipe())
+    async getTagsByTask(@Param() params: getOneTaskDTO) {
+    return this.tagTaskService.getTagsByTask(params)
    }
 
     @Put("add-tag")
+    @UsePipes(new ValidationPipe())
     async addTagToTask(@Body() body: addTagToTaskDTO) {
     return this.tagTaskService.addTagToTask(body);
    }
 
    @Get("get-tasks/:id")
-    async getTasksByTag(@Param("id") id: number) {
-        return this.tagTaskService.getTasksByTag(id)
+    async getTasksByTag(@Param("id") id: string, @Req() req: Request) {
+        return this.tagTaskService.getTasksByTag(id, req)
     }
 
 }

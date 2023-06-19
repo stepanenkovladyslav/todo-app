@@ -1,4 +1,10 @@
+import { IsNotEmpty, IsString } from "class-validator"
+
 export class addTagToTaskDTO {
-    readonly id: number
-    readonly tagId: number
+    @IsString()
+    @IsNotEmpty()
+    readonly id: string
+    @IsString()
+    @IsNotEmpty()
+    readonly tagId: string
 }

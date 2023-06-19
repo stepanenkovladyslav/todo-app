@@ -5,43 +5,43 @@ import { Tags } from "src/tags/schemas/tags.schema";
 import { Tasks } from "src/tasks/schemas/tasks.schema";
 import { getOneTaskDTO } from "./dto/getOne.dto";
 import { addTagToTaskDTO } from "./dto/addTagToTaskDTO.dto";
+import { Users } from "src/users/schemas/users.schema";
+import { Mode } from "fs";
 
 @Injectable() 
 
 export class TagTasksService {
-    constructor(@InjectModel(Tasks.name) private readonly taskModel: Model<Tasks>, @InjectModel(Tags.name) private readonly tagsModel: Model<Tags>) {}
+    constructor(@InjectModel(Tasks.name) private readonly taskModel: Model<Tasks>, @InjectModel(Tags.name) private readonly tagsModel: Model<Tags>, @InjectModel(Users.name) private readonly userModel: Model<Users>) {}
 
-    async getTagsByTask(id:getOneTaskDTO) {
-        const task = await this.taskModel.findOne({_id: id}) 
-        if (task) {
+    async getTagsByTask(params:getOneTaskDTO) {
+        const task = await this.taskModel.findOne({_id: params.id}) 
          const tags = task.tags;
          const allTags = Promise.all(tags.map(( async tagId => {
-             const tag = await this.tagsModel.findOne({_id: tagId});
+            const tag = await this.tagsModel.findOne({_id: tagId});
              return tag
          })))
          return allTags
-        } 
-        throw new NotFoundException()
      }
 
      async addTagToTask(body: addTagToTaskDTO) {
         const {tagId, id} = body;
         const task = await this.taskModel.findOne({_id: id})
-        const tag = await this.tagsModel.findOne({_id: tagId}) // catch if not found, will throw error
+        const tag = await this.tagsModel.findOne({_id: tagId}) 
         if (task && tag) {
-            task.tags.push(tag);
-            tag.tasks.push(task)
-            await task.save()
-            await tag.save()
+            task.tags.push(tag.id);
+            tag.tasks.push(task.id);
+            await task.save();
+            await tag.save();
             return task
+        } else {
+            throw new NotFoundException()
         }
     }
 
-    async getTasksByTag(id: number) {
+    async getTasksByTag(id: string, req: Request) {
         const tag = await this.tagsModel.findOne({_id:id})
-        if (tag) {
-            return tag.tasks;
-        }
-        return {message: "There is no such tag"}
+        return Promise.all(tag.tasks.map(async (taskId) => {
+            return await this.taskModel.findOne({_id: taskId})
+        }));
     }
 }
