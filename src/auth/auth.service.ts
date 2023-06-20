@@ -31,29 +31,24 @@ export class AuthService {
      }
 
     async login(body: loginDTO):Promise<string> {
-        try {
-            const {username, password} = body;
-            const user = await this.usersModel.findOne({username: username})
-            if (user) {
-                const rightPassword = await bcrypt.compare(password, user.password)
-                if (rightPassword) {
-                    const token = generateJwt(username, user.email)
-                        return token;
-                } else {
-                    throw new UnauthorizedException("Wrong username or password")
-                } 
+        const {username, password} = body;
+        const user = await this.usersModel.findOne({username: username})
+        if (user) {
+            const rightPassword = await bcrypt.compare(password, user.password)
+            if (rightPassword) {
+                const token = generateJwt(username, user.email)
+                    return token;
             } else {
                 throw new UnauthorizedException("Wrong username or password")
             } 
-        } catch(e){
-            throw new InternalServerErrorException()
-        }
+        } else {
+            throw new UnauthorizedException("Wrong username or password")
+        } 
     }
 
     async authorize(headers: authorizeDTO):Promise<string> {
         try {
             const oldToken = headers.authorization.split(" ")[1];
-            console.log(oldToken)
             const user = jwt.verify(oldToken, process.env.SECRET_KEY);
             if (typeof user === "object") {
                 const token = generateJwt(user.username, user.email)

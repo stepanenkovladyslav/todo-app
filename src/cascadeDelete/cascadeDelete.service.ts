@@ -13,10 +13,14 @@ export class cascadeDeleteService {
     @InjectModel(Tags.name) private readonly tagModel: Model<Tags>) {}
 
     async deleteUser(id: string) {
-        await this.userModel.deleteOne({_id: id});
-        await this.taskModel.deleteMany({user_id: id})
-        await this.tagModel.deleteMany({user_id: id})
-        return {message: "Deleted successfully"}
+        try {
+            await this.userModel.deleteOne({_id: id});
+            await this.taskModel.deleteMany({user_id: id})
+            await this.tagModel.deleteMany({user_id: id})
+            return {message: "Deleted successfully"}
+        } catch(e) {
+            throw new NotFoundException()
+        }
     }
 
     async deleteTask(req: Request, id: string) {

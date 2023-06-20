@@ -14,37 +14,25 @@ export class TagsService {
 
     async create(body: createTagDTO, req: Request): Promise<Tags> {
         const {name} = body;
-        try { 
-            const newTag = await this.tagsModel.create({name, user_id: req['user']._id}) 
-            req['user'].tags.push(newTag)
-            await req['user'].save()
-            await newTag.save()
-            return newTag;
-        } catch(e) {
-            throw new InternalServerErrorException()
-        }
+        const newTag = await this.tagsModel.create({name, user_id: req['user']._id}) 
+        req['user'].tags.push(newTag)
+        await req['user'].save()
+        await newTag.save()
+        return newTag;
     }
 
     async getAll(req: Request): Promise<Tags> {
-        try {
         return Promise.all(req['user'].tags.map(async (tagId:string) => {
             const tag = await this.tagsModel.findOne({_id: tagId});
             return tag
         }))
-        } catch(e) {
-            throw new InternalServerErrorException()
-        }
     }
 
     async changeName(body: changeTagNameDTO):Promise<Tags>{
-        try {
         const {id, newName} = body;
         const tag = await this.tagsModel.findOne({_id :id});
             tag.name = newName;
             await tag.save()
             return tag
-        } catch(e) {
-            throw new InternalServerErrorException()
-        }
     }
 }
