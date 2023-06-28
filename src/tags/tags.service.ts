@@ -21,7 +21,7 @@ export class TagsService {
         return newTag;
     }
 
-    async getAll(req: Request): Promise<Tags> {
+    async getAll(req: Request): Promise<Array<Tags>> {
         return Promise.all(req['user'].tags.map(async (tagId:string) => {
             const tag = await this.tagsModel.findOne({_id: tagId});
             return tag
