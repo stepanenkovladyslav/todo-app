@@ -23,8 +23,8 @@ export class TasksController {
 
    @Get(":id")
    @UsePipes(new ValidationPipe())
-   async getOne(@Param("id") id:getOneTaskDTO) {
-    return this.taskService.getOne(id)
+   async getOne(@Param() params:getOneTaskDTO) {
+    return this.taskService.getOne(params)
    }
 
    @Get("get-files/:id")

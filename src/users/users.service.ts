@@ -16,7 +16,7 @@ export class UsersService {
     constructor(@InjectModel(Users.name) private readonly userModel : Model<Users>) {}
 
    
-    async getInfo(id: string) {
+    async getInfo(id: string): Promise<Users>{
         try {
             const user = await this.userModel.findOne({_id: id}); 
             return user
@@ -25,7 +25,7 @@ export class UsersService {
         }
     }
 
-    async getTasksForUser(id: string) {
+    async getTasksForUser(id: string):Promise<Array<Tasks>> {
         try{
             const user = await this.userModel.findOne({_id: id});
             return user.tasks

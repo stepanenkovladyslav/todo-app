@@ -24,14 +24,14 @@ export class TasksService {
     @InjectModel(Tags.name) private tagsModel: Model<Tags>, @InjectModel(Users.name) private usersModel: Model<Users>)
     {}
 
-    async createTask(dto: createTaskDTO, req: Request) {
+    async createTask(dto: createTaskDTO, req: Request):Promise<Tasks> {
         const task = await this.taskModel.create({ ...dto, user_id: req['user']._id });
         req['user'].tasks.push(task);
         await req['user'].save()
-        return task
+        return task;
     }
 
-    async getAll(req: Request) {
+    async getAll(req: Request): Promise<Array<Tasks>> {
         const userTaskId = req['user'].tasks;
         const userTasks = Promise.all(userTaskId.map(async (taskId:string, idx:number) => {
             const task = await this.taskModel.findOne({_id: taskId});
@@ -40,12 +40,12 @@ export class TasksService {
         return userTasks;
     }
 
-    async getOne(id: getOneTaskDTO) {
-        const task = await this.taskModel.findOne({_id:id})
-        return task
+    async getOne(params: getOneTaskDTO):Promise<Tasks> {
+        const task = await this.taskModel.findOne({_id:params.id})
+        return task;
     }
 
-    async changeTitle(body : changeTitleDTO) {
+    async changeTitle(body : changeTitleDTO):Promise<Tasks> {
         const {id, newTitle} = body;
         const task = await this.taskModel.findOne({_id: id});
         task.title = newTitle;
@@ -53,7 +53,7 @@ export class TasksService {
         return task;
     }
 
-    async changeDescription(body:ChangeDescriptionDTO) {
+    async changeDescription(body:ChangeDescriptionDTO):Promise<Tasks> {
         const {id, newDescription} = body;
         const task = await this.taskModel.findOne({_id: id});
         task.description = newDescription;
@@ -61,7 +61,7 @@ export class TasksService {
         return task;
     }
 
-    async changeDeadline(body: ChangeDeadlineDTO) {
+    async changeDeadline(body: ChangeDeadlineDTO):Promise<Tasks> {
         const {id, newDeadline} = body;
         const task = await this.taskModel.findOne({_id: id});
         task.deadline = new Date(newDeadline);
@@ -69,10 +69,14 @@ export class TasksService {
         return task;
     }
 
-    async getFiles(params: getOneTaskDTO, res: Response) {
-        const task: Tasks = await this.taskModel.findOne({_id: params.id});
-        const filePath = path.join(process.cwd(), 'uploads', task.file);
-        res.sendFile(filePath)
+    async getFiles(params: getOneTaskDTO, res: Response):Promise<void> {
+        const task = await this.taskModel.findOne({_id: params.id});
+        if (task.file !== '') {
+          const filePath = path.join(process.cwd(), 'uploads', task.file);
+          res.sendFile(filePath)
+        } else {
+          res.status(200).json({message: 'There is no files attached to the task'});
+        }
     }
 
     async addFile(body : getOneTaskDTO, file: Express.Multer.File, req: Request): Promise<Tasks> {
@@ -88,16 +92,16 @@ export class TasksService {
         }
     }
 
-    async deleteFile(id : getOneTaskDTO) {
+    async deleteFile(id : getOneTaskDTO):Promise<Tasks> {
         const task = await this.taskModel.findOne({_id: id });
         const filename = task.file;
-        fs.unlink(path.join(__dirname, "..", "..", "uploads", filename) , (err) => { if (err) throw new NotFoundException()});
+        fs.unlink(path.join(__dirname, "..", "..", "uploads", filename) , (err:Error) => { if (err) throw new NotFoundException()});
         task.file = "";
         await task.save()
         return task;
     }
 
-    async changeCompletionStatus(body: changeCompletedDTO) {
+    async changeCompletionStatus(body: changeCompletedDTO):Promise<Tasks> {
         const {id, isCompleted} = body 
         const task = await this.taskModel.findOne({_id: id});
         task.isCompleted = isCompleted;
