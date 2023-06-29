@@ -12,7 +12,7 @@ export class cascadeDeleteService {
     @InjectModel(Tasks.name) private readonly taskModel: Model<Tasks>, 
     @InjectModel(Tags.name) private readonly tagModel: Model<Tags>) {}
 
-    async deleteUser(id: string) {
+    async deleteUser(id: string):Promise<{message:string}> {
         try {
             await this.userModel.deleteOne({_id: id});
             await this.taskModel.deleteMany({user_id: id})
@@ -23,7 +23,7 @@ export class cascadeDeleteService {
         }
     }
 
-    async deleteTask(req: Request, id: string) {
+    async deleteTask(req: Request, id: string):Promise<Array<Tasks>>{
         try {
             const task = await this.taskModel.findOne({_id: id})
             const user = await this.userModel.findOne({username: req['user'].username});
@@ -48,7 +48,7 @@ export class cascadeDeleteService {
         }
     }
 
-    async deleteTag(req: Request, id: string) {
+    async deleteTag(req: Request, id: string):Promise<{message:string}> {
         try {
             const tag = await this.tagModel.findOne({_id: id})
             const user = await this.userModel.findOne({username: req['user'].username});

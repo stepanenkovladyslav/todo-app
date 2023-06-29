@@ -8,7 +8,7 @@ import { Users } from "src/users/schemas/users.schema";
 @Injectable()
 export class TaskAccessMiddleware implements NestMiddleware{
     constructor(@InjectModel(Users.name) private readonly userModel : Model<Users>) {}
-    async use(req: Request, res: Response, next: (error?: any) => void) {
+    async use(req: Request, res: Response, next: (error?: any) => void): Promise<void> {
        if (req.method === "GET" && req['params'].id || req.method === "DELETE" && req['params'].id) {
         const taskId = req['params'].id;
         const user = await this.userModel.findOne({username: req['user'].username});

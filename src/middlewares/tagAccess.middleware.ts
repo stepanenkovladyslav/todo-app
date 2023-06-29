@@ -1,12 +1,14 @@
 import { ForbiddenException, Injectable, NestMiddleware, UnauthorizedException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Mode } from "fs";
+import { Model, ObjectId, Types } from "mongoose";
+import { Tags } from "src/tags/schemas/tags.schema";
 import { Users } from "src/users/schemas/users.schema";
 
 @Injectable()
 export class TagAccessMiddleware implements NestMiddleware {
     constructor(@InjectModel(Users.name) private readonly userModel : Model<Users>) {}
-    async use(req: Request, res: Response, next: (error?: any) => void) {
+    async use(req: Request, res: Response, next: (error?: any) => void):Promise<void> {
        if (req.method === "GET" && req['params'].id || req.method === "DELETE" && req['params'].id) {
         const tagId = req['params'].id;
         const user = await this.userModel.findOne({username: req['user'].username});
