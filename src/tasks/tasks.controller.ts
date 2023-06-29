@@ -11,13 +11,14 @@ import { extname } from "path";
 import { ChangeDescriptionDTO } from "./dto/changeDescription.dto";
 import { ChangeDeadlineDTO } from "./dto/changeDeadline.dto";
 import { changeCompletedDTO } from "./dto/changeCompleted.dto";
+import { RequestWithUser } from "src/globals";
 
 @Controller("tasks")
 
 export class TasksController {
     constructor(private readonly taskService: TasksService) {}
    @Get()
-   async getAll(@Req() req: Request) {
+   async getAll(@Req() req: RequestWithUser) {
     return this.taskService.getAll(req)
    }
 
@@ -35,7 +36,7 @@ export class TasksController {
 
    @Post("create")
    @UsePipes(new ValidationPipe())
-   async createTask(@Body() dto: createTaskDTO, @Req() req: Request) {
+   async createTask(@Body() dto: createTaskDTO, @Req() req: RequestWithUser) {
     return this.taskService.createTask(dto, req)
    } 
 
@@ -49,7 +50,7 @@ export class TasksController {
         {validators: [
             new FileTypeValidator({fileType: /^(text\/plain|application\/pdf)$/ })
         ]})) 
-        file: Express.Multer.File, @Req() req: Request) {
+        file: Express.Multer.File, @Req() req: RequestWithUser) {
     return this.taskService.addFile(body, file, req);
    }
 

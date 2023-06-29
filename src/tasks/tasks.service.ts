@@ -9,13 +9,14 @@ import { addTagToTaskDTO } from "../tagTasks/dto/addTagToTaskDTO.dto";
 import { Response } from "express";
 import { Tasks } from "./schemas/tasks.schema";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model } from "mongoose";
+import { Model, ObjectId } from "mongoose";
 import { NotFoundError } from "rxjs";
 import { Tags } from "src/tags/schemas/tags.schema";
 import { Users } from "src/users/schemas/users.schema";
 import { ChangeDescriptionDTO } from "./dto/changeDescription.dto";
 import { ChangeDeadlineDTO } from "./dto/changeDeadline.dto";
 import { changeCompletedDTO } from "./dto/changeCompleted.dto";
+import { RequestWithUser } from "src/globals";
 
 @Injectable()
 
@@ -24,16 +25,16 @@ export class TasksService {
     @InjectModel(Tags.name) private tagsModel: Model<Tags>, @InjectModel(Users.name) private usersModel: Model<Users>)
     {}
 
-    async createTask(dto: createTaskDTO, req: Request):Promise<Tasks> {
-        const task = await this.taskModel.create({ ...dto, user_id: req['user']._id });
-        req['user'].tasks.push(task);
-        await req['user'].save()
+    async createTask(dto: createTaskDTO, req: RequestWithUser):Promise<Tasks> {
+        const task = await this.taskModel.create({ ...dto, user_id: req.user._id });
+        req.user.tasks.push(task);
+        await req.user.save()
         return task;
     }
 
-    async getAll(req: Request): Promise<Array<Tasks>> {
-        const userTaskId = req['user'].tasks;
-        const userTasks = Promise.all(userTaskId.map(async (taskId:string, idx:number) => {
+    async getAll(req: RequestWithUser): Promise<Array<Tasks>> {
+        const userTaskId = req.user.tasks;
+        const userTasks = Promise.all(userTaskId.map(async (taskId:Tasks):Promise<Tasks> => {
             const task = await this.taskModel.findOne({_id: taskId});
             return task;
         }))
@@ -79,9 +80,9 @@ export class TasksService {
         }
     }
 
-    async addFile(body : getOneTaskDTO, file: Express.Multer.File, req: Request): Promise<Tasks> {
+    async addFile(body : getOneTaskDTO, file: Express.Multer.File, req: RequestWithUser): Promise<Tasks> {
         const {id} = body;
-        const isAvailable = req['user'].tasks.includes(id);
+        const isAvailable = req.user.tasks.includes(id as unknown as Tasks);
         if (isAvailable) {
             const task = await this.taskModel.findOne({_id: id});
             task.file = `${file.filename}`;

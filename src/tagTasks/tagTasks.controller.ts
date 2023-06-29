@@ -2,6 +2,7 @@ import { Body, Controller, Get, Inject, Param, Put, Req, UsePipes, ValidationPip
 import { getOneTaskDTO } from './dto/getOne.dto';
 import { TagTasksService } from './tagTasks.service';
 import { addTagToTaskDTO } from './dto/addTagToTaskDTO.dto';
+import { RequestWithUser } from 'src/globals';
 
 @Controller('tag-tasks')
 export class TagTasksController {
@@ -20,7 +21,7 @@ export class TagTasksController {
    }
 
    @Get("get-tasks/:id")
-    async getTasksByTag(@Param("id") id: string, @Req() req: Request) {
+    async getTasksByTag(@Param("id") id: string, @Req() req: RequestWithUser) {
         return this.tagTaskService.getTasksByTag(id, req)
     }
 

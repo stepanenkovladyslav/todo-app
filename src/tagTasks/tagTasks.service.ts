@@ -7,6 +7,7 @@ import { getOneTaskDTO } from "./dto/getOne.dto";
 import { addTagToTaskDTO } from "./dto/addTagToTaskDTO.dto";
 import { Users } from "src/users/schemas/users.schema";
 import { Mode } from "fs";
+import { RequestWithUser } from "src/globals";
 
 @Injectable() 
 
@@ -38,7 +39,8 @@ export class TagTasksService {
         }
     }
 
-    async getTasksByTag(id: string, req: Request) {
+    async getTasksByTag(id: string, req: RequestWithUser) {
+        console.log(req.user + " bitch")
         const tag = await this.tagsModel.findOne({_id:id})
         return Promise.all(tag.tasks.map(async (taskId) => {
             return await this.taskModel.findOne({_id: taskId})
