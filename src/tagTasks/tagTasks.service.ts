@@ -14,7 +14,7 @@ import { RequestWithUser } from "src/globals";
 export class TagTasksService {
     constructor(@InjectModel(Tasks.name) private readonly taskModel: Model<Tasks>, @InjectModel(Tags.name) private readonly tagsModel: Model<Tags>, @InjectModel(Users.name) private readonly userModel: Model<Users>) {}
 
-    async getTagsByTask(params:getOneTaskDTO) {
+    async getTagsByTask(params:getOneTaskDTO):Promise<Array<Tags>> {
         const task = await this.taskModel.findOne({_id: params.id}) 
          const tags = task.tags;
          const allTags = Promise.all(tags.map(( async tagId => {
@@ -24,7 +24,7 @@ export class TagTasksService {
          return allTags
      }
 
-     async addTagToTask(body: addTagToTaskDTO) {
+     async addTagToTask(body: addTagToTaskDTO):Promise<Tasks> {
         const {tagId, id} = body;
         const task = await this.taskModel.findOne({_id: id})
         const tag = await this.tagsModel.findOne({_id: tagId}) 
@@ -39,8 +39,7 @@ export class TagTasksService {
         }
     }
 
-    async getTasksByTag(id: string, req: RequestWithUser) {
-        console.log(req.user + " bitch")
+    async getTasksByTag(id: string):Promise<Array<Tasks>> {
         const tag = await this.tagsModel.findOne({_id:id})
         return Promise.all(tag.tasks.map(async (taskId) => {
             return await this.taskModel.findOne({_id: taskId})

@@ -21,8 +21,8 @@ export class TagTasksController {
    }
 
    @Get("get-tasks/:id")
-    async getTasksByTag(@Param("id") id: string, @Req() req: RequestWithUser) {
-        return this.tagTaskService.getTasksByTag(id, req)
+    async getTasksByTag(@Param("id") id: string){
+        return this.tagTaskService.getTasksByTag(id)
     }
 
 }
