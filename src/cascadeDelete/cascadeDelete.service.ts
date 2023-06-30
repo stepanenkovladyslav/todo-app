@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, ObjectId } from "mongoose";
 import { Tags } from "src/tags/schemas/tags.schema";
@@ -12,20 +12,29 @@ export class cascadeDeleteService {
     @InjectModel(Tasks.name) private readonly taskModel: Model<Tasks>, 
     @InjectModel(Tags.name) private readonly tagModel: Model<Tags>) {}
 
-    async deleteUser(id: string):Promise<{}> {
+    async deleteUser(id: string, req: Request):Promise<{}> {
         try {
-            const deletedUsers = await this.userModel.deleteOne({_id: id});
-            await this.taskModel.deleteMany({user_id: id})
-            await this.tagModel.deleteMany({user_id: id})
-            if (deletedUsers.deletedCount > 0) {
-                return {}
+            const user = await this.userModel.findOne({_id: id});
+            if (req['user'].username === user.username){
+                const deletedUsers = await this.userModel.deleteOne({_id: id});
+                await this.taskModel.deleteMany({user_id: id})
+                await this.tagModel.deleteMany({user_id: id})
+                if (deletedUsers.deletedCount > 0) {
+                    return {}
+                } else {
+                  throw new NotFoundException() 
+                }
             } else {
-              throw new NotFoundException() 
+              throw new UnauthorizedException()
             }
         } catch(e) {
-            throw new NotFoundException()
-        }
+      if (e instanceof(UnauthorizedException)) {
+        throw new UnauthorizedException()
+      } else {
+        throw new NotFoundException()
+      }
     }
+  }
 
     async deleteTask(req: Request, id: string):Promise<{}>{
         try {

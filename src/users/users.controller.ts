@@ -9,13 +9,13 @@ export class UserController {
     constructor(private readonly userService: UsersService) {}
     
     @Get(":id")
-    async getInfo(@Param("id") id : string) {
-        return this.userService.getInfo(id)
+    async getInfo(@Param("id") id : string, @Req() req: Request) {
+        return this.userService.getInfo(id, req)
     }
 
     @Get('tasks/:id')
-    async getTasksForUser(@Param("id") id: string) {
-        return this.userService.getTasksForUser(id)
+    async getTasksForUser(@Param("id") id: string, @Req() req: Request) {
+        return this.userService.getTasksForUser(id, req)
     }
 
 }

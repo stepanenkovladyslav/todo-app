@@ -112,21 +112,3 @@ export class TasksService {
 }
 
 
-
-
-/*
-
-bad GET http://127.0.0.1:3000/get_my_user_info/user/get?number=3  resp => "Pasha,12,lviv" STATUS 301
-good GET http://127.0.0.1:3000/api/v1/user/3   =>  {name:"Pasha",age:12,city:"Lviv"} | XML STATUS 200
-
-// get     http://127.0.0.1:3000/api/v1/user/3  SEND -
-   get     http://127.0.0.1:3000/api/v1/user?limit=3&page=2  SEND -
-   put     http://127.0.0.1:3000/api/v1/user/3  SEND - JSON
-   delete  http://127.0.0.1:3000/api/v1/user/3  SEND - ...
-   post    http://127.0.0.1:3000/api/v1/user/   SEND - JSON
-
-   error
-   bad  STATUS 200 RESP "Error request"
-   good STATUS 401 RESP {message: "Not Authorization"}
-
-*/

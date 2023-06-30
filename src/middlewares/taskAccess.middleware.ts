@@ -22,9 +22,9 @@ export class TaskAccessMiddleware implements NestMiddleware{
             throw new ForbiddenException()
         }
        } else if (req.method === "GET" && !req['params'].id) {
-        const user = await this.userModel.findOne({username: req['user'].username});
-            req.user = user; 
-            next()
+          const user = await this.userModel.findOne({username: req['user'].username});
+          req.user = user; 
+          next()
        } else if (req.method === 'POST' || req.method === "PUT") {
             const user = await this.userModel.findOne({username: req['user'].username});
             req.user = user;

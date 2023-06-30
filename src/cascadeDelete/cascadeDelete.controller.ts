@@ -8,8 +8,8 @@ export class cascadeDeleteController {
 
     @Delete('users/:id')
     @HttpCode(204)
-    async deleteUser(@Param('id') id: string) {
-        return this.deleteService.deleteUser(id)
+    async deleteUser(@Param('id') id: string, @Req() req: Request) {
+        return this.deleteService.deleteUser(id, req)
     }
 
     @Delete('/tasks/:id')
@@ -25,4 +25,3 @@ export class cascadeDeleteController {
     }
 }
 
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1heCIsImVtYWlsIjoibWF4QGdtYWlsLmNvbSIsImlhdCI6MTY4NjczNjc2MSwiZXhwIjoxNjg2NzQzOTYxfQ.V6kzcKFt1avtXcCLCTvEMp06TxPpj--ehfMT2ucnOy0

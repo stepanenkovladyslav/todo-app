@@ -1,10 +1,11 @@
-import { Module, forwardRef } from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule, forwardRef } from "@nestjs/common";
 import { UserController } from "./users.controller";
 import { UsersService } from "./users.service";
 import { MongooseModule } from "@nestjs/mongoose";
 import { Users, UsersSchema } from "./schemas/users.schema";
 import { TasksModule } from "src/tasks/tasks.module";
 import { TagsModule } from "src/tags/tags.module";
+import { AuthMiddleware } from "src/middlewares/auth.middleware";
 
 @Module({
     imports: [MongooseModule.forFeature([{name: Users.name, schema: UsersSchema}])],
@@ -13,4 +14,9 @@ import { TagsModule } from "src/tags/tags.module";
     exports: [MongooseModule.forFeature([{name: Users.name, schema: UsersSchema}]), UsersService]
 })
 
-export class UsersModule {}
+
+export class UsersModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthMiddleware).forRoutes(UserController);
+  }
+}
