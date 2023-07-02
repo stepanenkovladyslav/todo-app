@@ -34,7 +34,7 @@ export class TasksController {
     return this.taskService.getFiles(params, res)
    }
 
-   @Post("create")
+   @Post()
    @UsePipes(new ValidationPipe())
    async createTask(@Body() dto: createTaskDTO, @Req() req: RequestWithUser) {
     return this.taskService.createTask(dto, req)
@@ -77,11 +77,6 @@ export class TasksController {
    async changeCompletionStatus(@Body() body: changeCompletedDTO) {
     return this.taskService.changeCompletionStatus(body)
    }
-
-//    @Delete(":id")
-//    async deleteTask(@Param("id") id: getOneTaskDTO, @Req() req: Request) {
-//     return this.taskService.deleteTask(id, req)
-//    }
 
    @Delete("delete-files/:id") 
    async deleteFiles(@Param("id") id: getOneTaskDTO) {

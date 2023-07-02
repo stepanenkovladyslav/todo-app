@@ -8,7 +8,7 @@ import { RequestWithUser } from 'src/globals';
 export class TagTasksController {
     constructor(private readonly tagTaskService: TagTasksService) {}
     
-    @Get("/get-tags/:id")
+    @Get("/tags/:id")
     @UsePipes(new ValidationPipe())
     async getTagsByTask(@Param() params: getOneTaskDTO) {
     return this.tagTaskService.getTagsByTask(params)
@@ -20,7 +20,7 @@ export class TagTasksController {
     return this.tagTaskService.addTagToTask(body);
    }
 
-   @Get("get-tasks/:id")
+   @Get("tasks/:id")
     async getTasksByTag(@Param("id") id: string){
         return this.tagTaskService.getTasksByTag(id)
     }
