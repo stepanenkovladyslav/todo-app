@@ -32,18 +32,18 @@ export class AuthService {
 
     async login(body: loginDTO):Promise<string> {
         const {username, password} = body;
+        
         const user = await this.usersModel.findOne({username: username})
-        if (user) {
-            const rightPassword = await bcrypt.compare(password, user.password)
-            if (rightPassword) {
-                const token = generateJwt(username, user.email)
-                    return token;
-            } else {
-                throw new UnauthorizedException("Wrong username or password")
-            } 
-        } else {
+        if (!user) {
             throw new UnauthorizedException("Wrong username or password")
-        } 
+        }
+        
+        const rightPassword = await bcrypt.compare(password, user.password)
+        if (!rightPassword) {
+            throw new UnauthorizedException("Wrong username or password")
+        }
+
+        return generateJwt(username, user.email)
     }
 
     async authorize(headers: authorizeDTO):Promise<string> {
