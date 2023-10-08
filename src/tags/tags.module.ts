@@ -10,14 +10,14 @@ import { AuthMiddleware } from "src/middlewares/auth.middleware";
 import { TagAccessMiddleware } from "src/middlewares/tagAccess.middleware";
 
 @Module({
-    imports: [MongooseModule.forFeature([{name: Tags.name, schema: TagsSchema}]),  UsersModule],
-    controllers: [TagsController],
-    providers: [TagsService],
-    exports:[MongooseModule.forFeature([{name: Tags.name, schema: TagsSchema}])]
+  imports: [MongooseModule.forFeature([{ name: Tags.name, schema: TagsSchema }]), UsersModule],
+  controllers: [TagsController],
+  providers: [TagsService],
+  exports: [MongooseModule.forFeature([{ name: Tags.name, schema: TagsSchema }])]
 })
 
-export class TagsModule implements NestModule{
-    configure(consumer: MiddlewareConsumer) {
-        consumer.apply(AuthMiddleware, TagAccessMiddleware).forRoutes(TagsController)
-    }
+export class TagsModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthMiddleware, TagAccessMiddleware).forRoutes(TagsController)
+  }
 }

@@ -6,23 +6,23 @@ import { RequestWithUser } from 'src/globals';
 
 @Controller('tag-tasks')
 export class TagTasksController {
-    constructor(private readonly tagTaskService: TagTasksService) {}
-    
-    @Get("/tags/:id")
-    @UsePipes(new ValidationPipe())
-    async getTagsByTask(@Param() params: getOneTaskDTO) {
+  constructor(private readonly tagTaskService: TagTasksService) { }
+
+  @Get("/tags/:id")
+  @UsePipes(new ValidationPipe())
+  async getTagsByTask(@Param() params: getOneTaskDTO) {
     return this.tagTaskService.getTagsByTask(params)
-   }
+  }
 
-    @Put("add-tag")
-    @UsePipes(new ValidationPipe())
-    async addTagToTask(@Body() body: addTagToTaskDTO) {
+  @Put("add-tag")
+  @UsePipes(new ValidationPipe())
+  async addTagToTask(@Body() body: addTagToTaskDTO) {
     return this.tagTaskService.addTagToTask(body);
-   }
+  }
 
-   @Get("tasks/:id")
-    async getTasksByTag(@Param("id") id: string){
-        return this.tagTaskService.getTasksByTag(id)
-    }
+  @Get("tasks/:id")
+  async getTasksByTag(@Param("id") id: string) {
+    return this.tagTaskService.getTasksByTag(id)
+  }
 
 }

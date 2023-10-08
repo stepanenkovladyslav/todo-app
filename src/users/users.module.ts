@@ -8,10 +8,10 @@ import { TagsModule } from "src/tags/tags.module";
 import { AuthMiddleware } from "src/middlewares/auth.middleware";
 
 @Module({
-    imports: [MongooseModule.forFeature([{name: Users.name, schema: UsersSchema}])],
-    controllers: [UserController],
-    providers: [UsersService],
-    exports: [MongooseModule.forFeature([{name: Users.name, schema: UsersSchema}]), UsersService]
+  imports: [MongooseModule.forFeature([{ name: Users.name, schema: UsersSchema }])],
+  controllers: [UserController],
+  providers: [UsersService],
+  exports: [MongooseModule.forFeature([{ name: Users.name, schema: UsersSchema }]), UsersService]
 })
 
 

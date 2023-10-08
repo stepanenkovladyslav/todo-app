@@ -13,38 +13,38 @@ import { authorizeDTO } from "src/auth/dto/authorizeDTO";
 @Injectable()
 
 export class UsersService {
-    constructor(@InjectModel(Users.name) private readonly userModel : Model<Users>) {}
+  constructor(@InjectModel(Users.name) private readonly userModel: Model<Users>) { }
 
-   
-    async getInfo(id: string, req: Request): Promise<Users>{
-        try {
-            const user = await this.userModel.findOne({_id: id}); 
-            if (req['user'].username === user.username) {
-              return user
-            } else {
-              throw new UnauthorizedException()
-            }
-        } catch(e) {
-            if (e instanceof UnauthorizedException) {
-              throw new UnauthorizedException()
-            }
-            throw new NotFoundException()
-        }
-    }
 
-    async getTasksForUser(id: string, req: Request):Promise<Array<Tasks>> {
-        try{
-           const user = await this.userModel.findOne({_id: id}); 
-           if (req['user'].username === user.username) {
-            return user.tasks
-            } else {
-              throw new UnauthorizedException()
-            }
-        } catch(e) {
-            if (e instanceof UnauthorizedException) {
-              throw new UnauthorizedException()
-            }
-            throw new NotFoundException()
-        }
+  async getInfo(id: string, req: Request): Promise<Users> {
+    try {
+      const user = await this.userModel.findOne({ _id: id });
+      if (req['user'].username === user.username) {
+        return user
+      } else {
+        throw new UnauthorizedException()
+      }
+    } catch (e) {
+      if (e instanceof UnauthorizedException) {
+        throw new UnauthorizedException()
+      }
+      throw new NotFoundException()
     }
+  }
+
+  async getTasksForUser(id: string, req: Request): Promise<Array<Tasks>> {
+    try {
+      const user = await this.userModel.findOne({ _id: id });
+      if (req['user'].username === user.username) {
+        return user.tasks
+      } else {
+        throw new UnauthorizedException()
+      }
+    } catch (e) {
+      if (e instanceof UnauthorizedException) {
+        throw new UnauthorizedException()
+      }
+      throw new NotFoundException()
+    }
+  }
 }

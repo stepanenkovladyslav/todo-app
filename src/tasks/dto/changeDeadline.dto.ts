@@ -1,12 +1,12 @@
 import { Type } from "class-transformer";
-import {  IsDate, IsDateString, IsNotEmpty, IsString } from "class-validator";
+import { IsDate, IsDateString, IsNotEmpty, IsString } from "class-validator";
 
 export class ChangeDeadlineDTO {
-    @IsString()
-    @IsNotEmpty()
-    id: string
+  @IsString()
+  @IsNotEmpty()
+  id: string
 
-    @IsDateString()
-    @IsNotEmpty()
-    newDeadline: Date
+  @IsDateString()
+  @IsNotEmpty()
+  newDeadline: Date
 }

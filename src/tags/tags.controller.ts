@@ -8,23 +8,23 @@ import { RequestWithUser } from "src/globals";
 @Controller("tags")
 
 export class TagsController {
-    constructor(private readonly tagsService: TagsService) {}
+  constructor(private readonly tagsService: TagsService) { }
 
-    @Get()
-    async getAll(@Req() req: RequestWithUser) {
-        return this.tagsService.getAll(req)
-    }
+  @Get()
+  async getAll(@Req() req: RequestWithUser) {
+    return this.tagsService.getAll(req)
+  }
 
-    @Post()
-    @UsePipes(new ValidationPipe())
-    async create(@Body() body: createTagDTO, @Req() req: RequestWithUser) {
-        return this.tagsService.create(body, req)
-    }
+  @Post()
+  @UsePipes(new ValidationPipe())
+  async create(@Body() body: createTagDTO, @Req() req: RequestWithUser) {
+    return this.tagsService.create(body, req)
+  }
 
-    @Put()
-    @UsePipes(new ValidationPipe())
-    async changeName(@Body() body: changeTagNameDTO) {
-        return this.tagsService.changeName(body)
-    }
+  @Put()
+  @UsePipes(new ValidationPipe())
+  async changeName(@Body() body: changeTagNameDTO) {
+    return this.tagsService.changeName(body)
+  }
 
 }

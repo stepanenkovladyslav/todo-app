@@ -9,19 +9,19 @@ import { UsersModule } from "src/users/users.module";
 import { TagAccessMiddleware } from "src/middlewares/tagAccess.middleware";
 
 @Module({
-    imports: [TasksModule, TagsModule, UsersModule],
-    controllers: [TagTasksController],
-    providers: [TagTasksService],
-    exports: []
+  imports: [TasksModule, TagsModule, UsersModule],
+  controllers: [TagTasksController],
+  providers: [TagTasksService],
+  exports: []
 })
 
 export class tagTasksModule implements NestModule {
-    configure(consumer: MiddlewareConsumer) {       
-        consumer.apply(AuthMiddleware).forRoutes(TagTasksController);
-        consumer.apply(TaskAccessMiddleware).forRoutes(
-            { path: 'tag-tasks/get-tags/:id', method: RequestMethod.GET },
-            { path: 'tag-tasks/add-tag', method: RequestMethod.PUT }
-        );
-        consumer.apply(TagAccessMiddleware).forRoutes({path: "tag-tasks/get-tasks/:id", method: RequestMethod.GET})
-    }
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(AuthMiddleware).forRoutes(TagTasksController);
+    consumer.apply(TaskAccessMiddleware).forRoutes(
+      { path: 'tag-tasks/get-tags/:id', method: RequestMethod.GET },
+      { path: 'tag-tasks/add-tag', method: RequestMethod.PUT }
+    );
+    consumer.apply(TagAccessMiddleware).forRoutes({ path: "tag-tasks/get-tasks/:id", method: RequestMethod.GET })
+  }
 }

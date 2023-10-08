@@ -9,14 +9,14 @@ export type TagsDocument = Tags & Document;
 
 
 export class Tags {
-    @Prop({required: true})
-    name: string
+  @Prop({ required: true })
+  name: string
 
-    @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true})
-    user_id: string
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true })
+  user_id: string
 
-    @Prop([{type: mongoose.Schema.Types.ObjectId, ref: 'Tasks'}, {default: []}])
-    tasks: Array<Tasks>;
+  @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'Tasks' }, { default: [] }])
+  tasks: Array<Tasks>;
 }
 
 export const TagsSchema = SchemaFactory.createForClass(Tags);

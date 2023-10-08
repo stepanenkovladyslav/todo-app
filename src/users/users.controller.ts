@@ -6,16 +6,16 @@ import { authorizeDTO } from "src/auth/dto/authorizeDTO";
 @Controller("users")
 
 export class UserController {
-    constructor(private readonly userService: UsersService) {}
-    
-    @Get(":id")
-    async getInfo(@Param("id") id : string, @Req() req: Request) {
-        return this.userService.getInfo(id, req)
-    }
+  constructor(private readonly userService: UsersService) { }
 
-    @Get('tasks/:id')
-    async getTasksForUser(@Param("id") id: string, @Req() req: Request) {
-        return this.userService.getTasksForUser(id, req)
-    }
+  @Get(":id")
+  async getInfo(@Param("id") id: string, @Req() req: Request) {
+    return this.userService.getInfo(id, req)
+  }
+
+  @Get('tasks/:id')
+  async getTasksForUser(@Param("id") id: string, @Req() req: Request) {
+    return this.userService.getTasksForUser(id, req)
+  }
 
 }

@@ -11,29 +11,29 @@ import { RequestWithUser } from "src/globals";
 @Injectable()
 
 export class TagsService {
-    constructor(@InjectModel(Tags.name) private readonly tagsModel : Model<Tags>) {}
+  constructor(@InjectModel(Tags.name) private readonly tagsModel: Model<Tags>) { }
 
-    async create(body: createTagDTO, req: RequestWithUser): Promise<Tags> {
-        const {name} = body;
-        const newTag = await this.tagsModel.create({name, user_id: req.user._id}) 
-        req.user.tags.push(newTag)
-        await req.user.save()
-        await newTag.save()
-        return newTag;
-    }
+  async create(body: createTagDTO, req: RequestWithUser): Promise<Tags> {
+    const { name } = body;
+    const newTag = await this.tagsModel.create({ name, user_id: req.user._id })
+    req.user.tags.push(newTag)
+    await req.user.save()
+    await newTag.save()
+    return newTag;
+  }
 
-    async getAll(req: RequestWithUser): Promise<Array<Tags>> {
-        return Promise.all(req.user.tags.map(async (tagId:Tags) => {
-            const tag = await this.tagsModel.findOne({_id: tagId});
-            return tag
-        }))
-    }
+  async getAll(req: RequestWithUser): Promise<Array<Tags>> {
+    return Promise.all(req.user.tags.map(async (tagId: Tags) => {
+      const tag = await this.tagsModel.findOne({ _id: tagId });
+      return tag
+    }))
+  }
 
-    async changeName(body: changeTagNameDTO):Promise<Tags>{
-        const {id, newName} = body;
-        const tag = await this.tagsModel.findOne({_id :id});
-            tag.name = newName;
-            await tag.save()
-            return tag
-    }
+  async changeName(body: changeTagNameDTO): Promise<Tags> {
+    const { id, newName } = body;
+    const tag = await this.tagsModel.findOne({ _id: id });
+    tag.name = newName;
+    await tag.save()
+    return tag
+  }
 }
