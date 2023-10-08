@@ -25,7 +25,7 @@ export class TaskAccessMiddleware implements NestMiddleware {
       const user = await this.userModel.findOne({ username: req['user'].username });
       req.user = user;
       next()
-    } else if (req.method === 'POST' || req.method === "PUT") {
+    } else if (req.method === 'POST' || req.method === "PUT" || req.method === "PATCH") {
       const user = await this.userModel.findOne({ username: req['user'].username });
       req.user = user;
       if (req.body['id']) {

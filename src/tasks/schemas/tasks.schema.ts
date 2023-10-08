@@ -6,26 +6,26 @@ import { Users } from "src/users/schemas/users.schema";
 @Schema()
 
 export class Tasks {
-  @Prop({ required: true })
-  title: string
+    @Prop({required: true})
+    title: string
 
-  @Prop()
-  description: string
+    @Prop()
+    description: string
 
-  @Prop({ default: Date.now() })
-  deadline: Date
+    @Prop({default: Date.now()})
+    deadline: Date
 
-  @Prop({ default: '' })
-  file: string
+    @Prop({default: ''})
+    file: string
 
-  @Prop({ required: true })
-  isCompleted: boolean
+    @Prop({required: true})
+    isCompleted: boolean
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Users', required: true })
-  user_id: Users
+    @Prop({type: mongoose.Schema.Types.ObjectId, ref: 'Users',required: true})
+    user_id: Users
 
-  @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: "Tags" }, { default: [] }])
-  tags: Array<Tags>
+    @Prop([{type: mongoose.Schema.Types.ObjectId, ref: "Tags"}, {default: []} ])
+    tags: Array<Tags>
 }
 
 export const TasksSchema = SchemaFactory.createForClass(Tasks)

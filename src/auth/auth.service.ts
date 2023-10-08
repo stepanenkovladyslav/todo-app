@@ -32,7 +32,6 @@ export class AuthService {
 
   async login(body: loginDTO): Promise<string> {
     const { username, password } = body;
-
     const user = await this.usersModel.findOne({ username: username })
     if (!user) {
       throw new UnauthorizedException("Wrong username or password")
@@ -42,7 +41,7 @@ export class AuthService {
     if (!rightPassword) {
       throw new UnauthorizedException("Wrong username or password")
     }
-
+    console.log(user.email)
     return generateJwt(username, user.email)
   }
 

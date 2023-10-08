@@ -1,22 +1,28 @@
-import { ForbiddenException, Inject, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from "@nestjs/common";
-const fs = require("fs")
+import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import * as fs from 'fs'
 import * as path from 'path';
 import { createTaskDTO } from "./dto/createTask.dto";
-import { getOneTaskDTO } from "../tagTasks/dto/getOne.dto";
 import { changeTitleDTO } from "./dto/changeTaskInfo.dto";
-import { createReadStream } from "fs";
-import { addTagToTaskDTO } from "../tagTasks/dto/addTagToTaskDTO.dto";
 import { Response } from "express";
 import { Tasks } from "./schemas/tasks.schema";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model, ObjectId } from "mongoose";
-import { NotFoundError } from "rxjs";
+import { Model } from "mongoose";
 import { Tags } from "src/tags/schemas/tags.schema";
 import { Users } from "src/users/schemas/users.schema";
-import { ChangeDescriptionDTO } from "./dto/changeDescription.dto";
-import { ChangeDeadlineDTO } from "./dto/changeDeadline.dto";
-import { changeCompletedDTO } from "./dto/changeCompleted.dto";
+import { changeDescriptionDTO } from "./dto/changeDescription.dto";
+import { changeDeadlineDTO } from "./dto/changeDeadline.dto";
+import { changeStatusDTO } from "./dto/changeStatus.dto";
 import { RequestWithUser } from "src/globals";
+
+
+enum TaskField {
+  title = "title",
+  description = "description",
+  deadline = "deadline",
+  status = "isCompleted"
+}
+
+type TaskFieldValue = string | boolean | Date;
 
 @Injectable()
 
@@ -24,6 +30,13 @@ export class TasksService {
   constructor(@InjectModel(Tasks.name) private taskModel: Model<Tasks>,
     @InjectModel(Tags.name) private tagsModel: Model<Tags>, @InjectModel(Users.name) private usersModel: Model<Users>) { }
 
+  async updateTaskField (id: string, field:TaskField, newValue: TaskFieldValue) {
+    const task = await this.taskModel.findById(id);
+    (task as any)[field] = newValue;
+    await task.save()
+    return task;
+  }
+  
   async createTask(dto: createTaskDTO, req: RequestWithUser): Promise<Tasks> {
     const task = await this.taskModel.create({ ...dto, user_id: req.user._id });
     req.user.tasks.push(task);
@@ -34,43 +47,37 @@ export class TasksService {
   async getAll(req: RequestWithUser): Promise<Array<Tasks>> {
     const userTaskId = req.user.tasks;
     const userTasks = Promise.all(userTaskId.map(async (taskId: Tasks): Promise<Tasks> => {
-      const task = await this.taskModel.findOne({ _id: taskId });
+      const task = await this.taskModel.findById(taskId);
       return task;
     }))
     return userTasks;
   }
 
-  async getOne(params: getOneTaskDTO): Promise<Tasks> {
-    const task = await this.taskModel.findOne({ _id: params.id })
+  async getOne(id: string): Promise<Tasks> {
+    const task = await this.taskModel.findById(id);
     return task;
   }
 
-  async changeTitle(body: changeTitleDTO): Promise<Tasks> {
-    const { id, newTitle } = body;
-    const task = await this.taskModel.findOne({ _id: id });
-    task.title = newTitle;
-    await task.save()
-    return task;
+  async changeTitle(id: string, body: changeTitleDTO): Promise<Tasks> {
+    const { newTitle } = body;
+    const updatedTask = await this.updateTaskField(id, TaskField.title, newTitle);
+    return updatedTask;
   }
 
-  async changeDescription(body: ChangeDescriptionDTO): Promise<Tasks> {
-    const { id, newDescription } = body;
-    const task = await this.taskModel.findOne({ _id: id });
-    task.description = newDescription;
-    await task.save()
-    return task;
+  async changeDescription(id: string, body: changeDescriptionDTO): Promise<Tasks> {
+    const { newDescription } = body;
+    const updatedTask = await this.updateTaskField(id, TaskField.description, newDescription);
+    return updatedTask;
   }
 
-  async changeDeadline(body: ChangeDeadlineDTO): Promise<Tasks> {
-    const { id, newDeadline } = body;
-    const task = await this.taskModel.findOne({ _id: id });
-    task.deadline = new Date(newDeadline);
-    await task.save()
-    return task;
+  async changeDeadline(id: string, body: changeDeadlineDTO): Promise<Tasks> {
+    const { newDeadline } = body;
+    const updatedTask = await this.updateTaskField(id, TaskField.deadline, newDeadline);
+    return updatedTask;
   }
 
-  async getFiles(params: getOneTaskDTO, res: Response): Promise<void> {
-    const task = await this.taskModel.findOne({ _id: params.id });
+  async getFiles(id: string, res: Response): Promise<void> {
+    const task = await this.taskModel.findById(id);
     if (task.file !== '') {
       const filePath = path.join(process.cwd(), 'uploads', task.file);
       res.sendFile(filePath)
@@ -79,11 +86,10 @@ export class TasksService {
     }
   }
 
-  async addFile(body: getOneTaskDTO, file: Express.Multer.File, req: RequestWithUser): Promise<Tasks> {
-    const { id } = body;
+  async addFile(id: string, file: Express.Multer.File, req: RequestWithUser): Promise<Tasks> {
     const isAvailable = req.user.tasks.includes(id as unknown as Tasks);
     if (isAvailable) {
-      const task = await this.taskModel.findOne({ _id: id });
+      const task = await this.taskModel.findById(id);
       task.file = `${file.filename}`;
       await task.save()
       return task;
@@ -92,21 +98,27 @@ export class TasksService {
     }
   }
 
-  async deleteFile(id: getOneTaskDTO): Promise<Tasks> {
-    const task = await this.taskModel.findOne({ _id: id });
+  async deleteFile(id: string): Promise<Tasks> {
+    const task = await this.taskModel.findById(id);
     const filename = task.file;
-    fs.unlink(path.join(__dirname, "..", "..", "uploads", filename), (err: Error) => { if (err) throw new NotFoundException() });
+    if (!filename) {
+      throw new NotFoundException()
+    }
+      fs.unlink(path.join(__dirname, "..", "..", "uploads", filename), (err) => { 
+        if (err) {
+          throw new NotFoundException()
+        }
+      })
+
     task.file = "";
     await task.save()
-    return task;
+    return;
   }
 
-  async changeCompletionStatus(body: changeCompletedDTO): Promise<Tasks> {
-    const { id, isCompleted } = body
-    const task = await this.taskModel.findOne({ _id: id });
-    task.isCompleted = isCompleted;
-    await task.save()
-    return task
+  async changeCompletionStatus(id: string, body: changeStatusDTO): Promise<Tasks> {
+    const { newStatus } = body
+    const updatedTask = await this.updateTaskField(id, TaskField.status, newStatus);
+    return updatedTask;
   }
 }
 
