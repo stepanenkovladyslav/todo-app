@@ -8,8 +8,8 @@ import { addTagToTaskDTO } from "../tagTasks/dto/addTagToTaskDTO.dto";
 import { Response } from "express";
 import { diskStorage } from "multer";
 import { extname } from "path";
-import { ChangeDescriptionDTO } from "./dto/changeDescription.dto";
-import { ChangeDeadlineDTO } from "./dto/changeDeadline.dto";
+import { changeDescriptionDTO } from "./dto/changeDescription.dto";
+import { changeDeadlineDTO } from "./dto/changeDeadline.dto";
 import { changeCompletedDTO } from "./dto/changeCompleted.dto";
 import { RequestWithUser } from "src/globals";
 
@@ -28,7 +28,7 @@ export class TasksController {
     return this.taskService.getOne(params)
   }
 
-  @Get("get-files/:id")
+  @Get(":id/file")
   @UsePipes(new ValidationPipe())
   async getFiles(@Param() params: getOneTaskDTO, @Res() res: Response) {
     return this.taskService.getFiles(params, res)
@@ -40,7 +40,7 @@ export class TasksController {
     return this.taskService.createTask(dto, req)
   }
 
-  @Post("add-file")
+  @Post("file")
   @UseInterceptors(FileInterceptor('file', {
     storage: diskStorage({
       destination: "./uploads", filename: (req, file, cb) => {
@@ -68,13 +68,13 @@ export class TasksController {
 
   @Put("change-desc")
   @UsePipes(new ValidationPipe())
-  async changeDescription(@Body() body: ChangeDescriptionDTO) {
+  async changeDescription(@Body() body: changeDescriptionDTO) {
     return this.taskService.changeDescription(body)
   }
 
   @Put("change-deadline")
   @UsePipes(new ValidationPipe())
-  async changeDeadline(@Body() body: ChangeDeadlineDTO) {
+  async changeDeadline(@Body() body: changeDeadlineDTO) {
     return this.taskService.changeDeadline(body)
   }
 
