@@ -1,7 +1,5 @@
-import { Body, Controller, Get, Headers, Param, Post, Req, Session } from "@nestjs/common";
+import {  Controller, Get,  Param,  Req, } from "@nestjs/common";
 import { UsersService } from "./users.service";
-import { createTaskDTO } from "src/tasks/dto/createTask.dto";
-import { authorizeDTO } from "src/auth/dto/authorizeDTO";
 
 @Controller("users")
 
@@ -10,10 +8,10 @@ export class UserController {
 
   @Get(":id")
   async getInfo(@Param("id") id: string, @Req() req: Request) {
-    return this.userService.getInfo(id, req)
+    return this.userService.getInfo(id, req['user'].username)
   }
 
-  @Get('tasks/:id')
+  @Get(':id/tasks')
   async getTasksForUser(@Param("id") id: string, @Req() req: Request) {
     return this.userService.getTasksForUser(id, req)
   }

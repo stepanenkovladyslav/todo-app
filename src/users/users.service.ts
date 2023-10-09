@@ -1,12 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import {  Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { Users } from "./schemas/users.schema";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import * as jwt from "jsonwebtoken"
-import { createTaskDTO } from "src/tasks/dto/createTask.dto";
 import { Tasks } from "src/tasks/schemas/tasks.schema";
-import { Mode } from "fs";
-import { authorizeDTO } from "src/auth/dto/authorizeDTO";
 
 
 
@@ -16,10 +12,10 @@ export class UsersService {
   constructor(@InjectModel(Users.name) private readonly userModel: Model<Users>) { }
 
 
-  async getInfo(id: string, req: Request): Promise<Users> {
+  async getInfo(id: string, username: string): Promise<Users> {
     try {
-      const user = await this.userModel.findOne({ _id: id });
-      if (req['user'].username === user.username) {
+      const user = await this.userModel.findOne({ _id: id, username: username});
+      if (user) {
         return user
       } else {
         throw new UnauthorizedException()
