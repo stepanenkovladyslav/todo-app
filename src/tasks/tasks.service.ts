@@ -1,4 +1,4 @@
-import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
+import { ForbiddenException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import * as fs from 'fs'
 import * as path from 'path';
 import { createTaskDTO } from "./dto/createTask.dto";
@@ -31,10 +31,7 @@ export class TasksService {
     @InjectModel(Tags.name) private tagsModel: Model<Tags>, @InjectModel(Users.name) private usersModel: Model<Users>) { }
 
   async updateTaskField (id: string, field:TaskField, newValue: TaskFieldValue) {
-    const task = await this.taskModel.findById(id);
-    (task as any)[field] = newValue;
-    await task.save()
-    return task;
+    return await this.taskModel.findByIdAndUpdate(id, {[field]: newValue}, {new: true})
   }
   
   async createTask(dto: createTaskDTO, req: RequestWithUser): Promise<Tasks> {
@@ -76,13 +73,12 @@ export class TasksService {
     return updatedTask;
   }
 
-  async getFiles(id: string, res: Response): Promise<void> {
+  async getFiles(id: string): Promise<string> {
     const task = await this.taskModel.findById(id);
     if (task.file !== '') {
-      const filePath = path.join(process.cwd(), 'uploads', task.file);
-      res.sendFile(filePath)
+      return path.join(process.cwd(), 'uploads', task.file);
     } else {
-      res.status(200).json({ message: 'There is no files attached to the task' });
+      return null;
     }
   }
 
@@ -102,11 +98,11 @@ export class TasksService {
     const task = await this.taskModel.findById(id);
     const filename = task.file;
     if (!filename) {
-      throw new NotFoundException()
+      throw new NotFoundException(`The file with ${id} was not found`)
     }
       fs.unlink(path.join(__dirname, "..", "..", "uploads", filename), (err) => { 
         if (err) {
-          throw new NotFoundException()
+          throw new InternalServerErrorException('Internal Server Error')
         }
       })
 

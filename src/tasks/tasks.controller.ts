@@ -29,7 +29,11 @@ export class TasksController {
   @Get(":id/file")
   @UsePipes(new ValidationPipe())
   async getFiles(@Param("id") id: string, @Res() res: Response) {
-    return this.taskService.getFiles(id, res)
+    const filePath = await this.taskService.getFiles(id)
+    if (filePath) {
+      return res.sendFile(filePath)
+    }
+    return res.status(200).json({message: 'No file attached to this task'})
   }
 
   @Post()
