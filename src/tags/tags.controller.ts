@@ -1,8 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Req, UsePipes, ValidationPipe } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Req, UsePipes, ValidationPipe } from "@nestjs/common";
 import { TagsService } from "./tags.service";
 import { createTagDTO } from "./dto/createTagDTO.dto";
 import { changeTagNameDTO } from "./dto/changeTagNameDTO.dto";
-import { addTagToTaskDTO } from "src/tagTasks/dto/addTagToTaskDTO.dto";
 import { RequestWithUser } from "src/globals";
 
 @Controller("tags")
@@ -21,10 +20,10 @@ export class TagsController {
     return this.tagsService.create(body, req)
   }
 
-  @Put()
+  @Patch(':id/name')
   @UsePipes(new ValidationPipe())
-  async changeName(@Body() body: changeTagNameDTO) {
-    return this.tagsService.changeName(body)
+  async changeName(@Param('id') id: string, @Body() body: changeTagNameDTO) {
+    return this.tagsService.changeName(id, body)
   }
 
 }

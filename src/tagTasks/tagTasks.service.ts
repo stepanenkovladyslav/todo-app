@@ -24,8 +24,8 @@ export class TagTasksService {
     return allTags
   }
 
-  async addTagToTask(body: addTagToTaskDTO): Promise<Tasks> {
-    const { tagId, id } = body;
+  async addTagToTask(id: string, body: addTagToTaskDTO): Promise<Tasks> {
+    const { tagId } = body;
     const task = await this.taskModel.findOne({ _id: id })
     const tag = await this.tagsModel.findOne({ _id: tagId })
     if (task && tag) {
@@ -35,7 +35,7 @@ export class TagTasksService {
       await tag.save();
       return task
     } else {
-      throw new NotFoundException()
+      throw new NotFoundException('Not Found')
     }
   }
 

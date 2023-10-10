@@ -1,8 +1,7 @@
-import { Body, Controller, Get, Inject, Param, Put, Req, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Get,  Param, Patch, Put,  UsePipes, ValidationPipe } from '@nestjs/common';
 import { getOneTaskDTO } from './dto/getOne.dto';
 import { TagTasksService } from './tagTasks.service';
 import { addTagToTaskDTO } from './dto/addTagToTaskDTO.dto';
-import { RequestWithUser } from 'src/globals';
 
 @Controller('tag-tasks')
 export class TagTasksController {
@@ -14,10 +13,10 @@ export class TagTasksController {
     return this.tagTaskService.getTagsByTask(params)
   }
 
-  @Put("add-tag")
+  @Patch(":id/tags")
   @UsePipes(new ValidationPipe())
-  async addTagToTask(@Body() body: addTagToTaskDTO) {
-    return this.tagTaskService.addTagToTask(body);
+  async addTagToTask(@Param('id') id: string, @Body() body: addTagToTaskDTO) {
+    return this.tagTaskService.addTagToTask(id, body);
   }
 
   @Get("tasks/:id")

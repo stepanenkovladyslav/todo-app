@@ -29,11 +29,14 @@ export class TagsService {
     }))
   }
 
-  async changeName(body: changeTagNameDTO): Promise<Tags> {
-    const { id, newName } = body;
-    const tag = await this.tagsModel.findOne({ _id: id });
-    tag.name = newName;
-    await tag.save()
+  async changeName(id: string, body: changeTagNameDTO): Promise<Tags> {
+    const { newName } = body;
+    const tag = await this.tagsModel.findByIdAndUpdate(id, {name: newName}, (err: Error) => {
+      if(err) {
+        throw new NotFoundException(`The task with id ${id} is not found`)
+      }
+    })
+    ;
     return tag
   }
 }
